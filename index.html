@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -594,25 +593,30 @@ function showGroupInfo(gid){
     return Promise.all([p1,p2]);
   });
   Promise.all(promises).then(function(){
+    renderMemberList(g,gid);
+  });
+}
+
+function renderMemberList(g,gid){
     var memberList=g.members.map(function(uid){
       var isMe=uid===me.uid;
       var loc=memberLocs[uid];
-      var name=loc?loc.displayName:(isMe?me.displayName:'Member');
+      var name=(loc&&loc.displayName)?loc.displayName:(isMe?(me.displayName||me.email):'Member '+uid.substr(0,6));
       var initial=(name||'?').charAt(0).toUpperCase();
-      var locStr=loc?'📍 '+loc.lat.toFixed(4)+', '+loc.lng.toFixed(4)+' • '+timeAgo(loc.timestamp):'📍 Location not shared yet';
+      var locStr=loc&&loc.lat?'📍 '+loc.lat.toFixed(4)+', '+loc.lng.toFixed(4)+' • '+timeAgo(loc.timestamp):'📍 Location not shared yet';
       return '<div style="padding:12px 0;border-bottom:1px solid #eee;display:flex;align-items:flex-start;gap:10px">'
         +'<div style="width:40px;height:40px;border-radius:50%;background:'+(isMe?'#1976D2':'#43A047')+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0">'+initial+'</div>'
         +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+name+(isMe?' (You)':'')+'</div>'
         +'<div style="font-size:12px;color:#666;margin-top:3px">'+locStr+'</div>'
-        +(loc?'<a href="https://maps.google.com/?q='+loc.lat+','+loc.lng+'" target="_blank" style="display:inline-block;margin-top:5px;font-size:12px;color:#1976D2;font-weight:600;text-decoration:none">🗺️ Open in Google Maps</a>':'')
+        +(loc&&loc.lat?'<a href="https://maps.google.com/?q='+loc.lat+','+loc.lng+'" target="_blank" style="display:inline-block;margin-top:5px;font-size:12px;color:#1976D2;font-weight:600;text-decoration:none">🗺️ Open in Google Maps</a>':'')
         +'</div></div>';
     }).join('');
-    var isAdmin=g.admins&&g.admins.indexOf(me.uid)>=0;
-    var info='<div style="padding:14px">'
+    var isAdmin=!g.admins||(g.admins&&g.admins.indexOf(me.uid)>=0);
+    document.getElementById('msgs').innerHTML='<div style="padding:14px">'
       +'<div style="background:#e3f2fd;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">'
-      +'<div><div style="font-size:11px;color:#666;font-weight:700;text-transform:uppercase">Invite Code</div>'
+      +'<div><div style="font-size:11px;color:#666;font-weight:700">INVITE CODE</div>'
       +'<div style="font-size:22px;font-weight:800;color:#1976D2;letter-spacing:4px">'+g.inviteCode+'</div></div>'
-      +'<input type="button" value="Copy" data-code="'+g.inviteCode+'" onclick="copyCode(this)" style="background:#1976D2;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
+      +'<input type="button" value="📋 Copy" data-code="'+g.inviteCode+'" onclick="copyCode(this)" style="background:#1976D2;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
       +'</div>'
       +'<div style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;margin-bottom:10px">'+g.members.length+' Members</div>'
       +memberList
@@ -621,8 +625,6 @@ function showGroupInfo(gid){
       +'<input type="button" value="🚪 Leave" data-gid="'+gid+'" onclick="leaveGroup(this.dataset.gid)" style="flex:1;background:#ff5722;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
       +(isAdmin?'<input type="button" value="🗑️ Delete" data-gid="'+gid+'" onclick="deleteGroup(this.dataset.gid)" style="flex:1;background:#d32f2f;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">':'')
       +'</div></div>';
-    document.getElementById('msgs').innerHTML=info;
-  });
 }
 
 
