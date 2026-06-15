@@ -1,635 +1,768 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1565C0">
 <title>LocationShare</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:sans-serif;background:#1976D2;min-height:100vh}
-.page{display:none;min-height:100vh}
-.page.active{display:block}
-#login-page{background:#1976D2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;min-height:100vh}
-.card{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:380px}
-h1{color:#fff;font-size:26px;text-align:center;margin-bottom:4px}
-.sub{color:#fff9;font-size:13px;text-align:center;margin-bottom:20px}
-h2{font-size:18px;font-weight:700;text-align:center;margin-bottom:16px;color:#212121}
-label{display:block;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;margin-bottom:5px;margin-top:12px}
-input[type=text],input[type=email],input[type=password]{width:100%;padding:13px;font-size:15px;border:2px solid #ddd;border-radius:10px;display:block;outline:none;-webkit-appearance:none}
-input[type=text]:focus,input[type=email]:focus,input[type=password]:focus{border-color:#1976D2}
-.err{background:#ffebee;color:#c62828;padding:10px;border-radius:8px;font-size:13px;margin-top:10px;display:none;text-align:center}
-.info{background:#e3f2fd;color:#1565C0;padding:10px;border-radius:8px;font-size:13px;margin-top:10px;text-align:center}
-input[type=button]{width:100%;padding:16px;font-size:16px;font-weight:700;border:none;border-radius:10px;cursor:pointer;margin-top:12px;-webkit-appearance:none;display:block}
-.btn-primary{background:#1976D2;color:#fff}
-.btn-secondary{background:#EEF2FF;color:#1976D2}
-#app-page{background:#f5f5f5}
-header{background:#1976D2;color:#fff;padding:14px 16px;display:flex;align-items:center}
-header h2{font-size:17px;font-weight:700;flex:1;color:#fff;margin:0}
-.tabs{display:flex;background:#fff;border-top:1px solid #ddd;position:fixed;bottom:0;width:100%;z-index:99}
-.tab{flex:1;padding:8px 5px;border:none;background:none;font-size:10px;font-weight:600;color:#999;cursor:pointer;text-align:center}
-.tab.on{color:#1976D2}
-.screen{display:none;padding:12px;padding-bottom:70px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--blue:#1976D2;--dark:#0D47A1;--green:#43A047;--red:#E53935;--orange:#FF5722;--bg:#F0F2F5;--card:#fff;--text:#1a1a1a;--gray:#666;--border:#E0E0E0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100dvh;overflow:hidden;max-width:480px;margin:0 auto}
+/* PAGES */
+.page{position:fixed;inset:0;max-width:480px;margin:0 auto;display:none;flex-direction:column;background:var(--bg)}
+.page.on{display:flex}
+/* LOGIN */
+#pg-login{background:linear-gradient(160deg,#0D47A1 0%,#1976D2 50%,#1E88E5 100%);align-items:center;justify-content:center;padding:24px}
+.login-logo{font-size:56px;margin-bottom:8px;text-align:center}
+.login-title{color:#fff;font-size:28px;font-weight:800;text-align:center;margin-bottom:4px}
+.login-sub{color:#ffffff99;font-size:14px;text-align:center;margin-bottom:28px}
+.login-card{background:#fff;border-radius:24px;padding:28px 24px;width:100%;max-width:360px;box-shadow:0 20px 60px #00000030}
+.login-card h2{font-size:20px;font-weight:700;margin-bottom:20px;text-align:center;color:var(--text)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field input{width:100%;padding:13px 16px;font-size:15px;border:1.5px solid var(--border);border-radius:12px;outline:none;background:#fff;color:var(--text);transition:.2s}
+.field input:focus{border-color:var(--blue)}
+.err-box{background:#ffebee;color:#c62828;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;display:none}
+.btn{width:100%;padding:15px;font-size:16px;font-weight:700;border:none;border-radius:12px;cursor:pointer;-webkit-appearance:none;transition:.15s}
+.btn:active{opacity:.85;transform:scale(.98)}
+.btn-blue{background:var(--blue);color:#fff;margin-top:4px}
+.btn-ghost{background:#F0F4FF;color:var(--blue);margin-top:10px}
+/* APP HEADER */
+.app-header{background:var(--blue);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:0 2px 8px #00000020}
+.app-header h1{flex:1;font-size:17px;font-weight:700}
+.header-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px;line-height:1}
+/* BOTTOM NAV */
+.bottom-nav{background:#fff;border-top:1px solid var(--border);display:flex;flex-shrink:0;box-shadow:0 -2px 10px #00000010}
+.nav-item{flex:1;padding:10px 4px 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#999;font-size:10px;font-weight:600;transition:.15s;-webkit-appearance:none}
+.nav-item.on{color:var(--blue)}
+.nav-icon{font-size:22px;line-height:1}
+/* SCREENS */
+.screen{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .screen.on{display:block}
-.gcard{background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 1px 3px #0001}
-.gav{width:46px;height:46px;border-radius:50%;background:#1976D2;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex-shrink:0}
-.fab{position:fixed;bottom:62px;right:16px;width:52px;height:52px;border-radius:50%;background:#1976D2;color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 3px 10px #0003;z-index:90}
-#chatscreen{padding:0;padding-bottom:110px}
-#msgs{padding:10px;display:flex;flex-direction:column;gap:4px;min-height:200px}
-.mw{display:flex;flex-direction:column;margin:2px 8px}
-.mw.me{align-items:flex-end}
-.mw.you{align-items:flex-start}
-.mb{padding:8px 12px;border-radius:14px;font-size:14px;max-width:72%;word-break:break-word}
-.mb.me{background:#DCF8C6}
-.mb.you{background:#fff;box-shadow:0 1px 2px #0001}
-.mn{font-size:10px;color:#1976D2;font-weight:700;margin-bottom:2px}
-.mt{font-size:9px;color:#999;margin-top:2px;text-align:right}
-#cbar{position:fixed;bottom:58px;left:0;right:0;background:#fff;padding:8px;display:flex;gap:8px;border-top:1px solid #ddd;z-index:90}
-#cinput{flex:1;padding:10px 14px;border:1.5px solid #ddd;border-radius:20px;font-size:15px;outline:none}
-#csend{background:#1976D2;color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:18px;cursor:pointer;flex-shrink:0}
+/* GROUPS SCREEN */
+.screen-pad{padding:14px}
+.section-label{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding:0 4px}
+.group-card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:0 2px 8px #00000008;overflow:hidden}
+.group-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.group-avatar{width:50px;height:50px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0}
+.group-info{flex:1;min-width:0}
+.group-name{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.group-meta{font-size:12px;color:var(--gray);margin-top:3px}
+.code-badge{background:#EEF4FF;border-radius:10px;padding:6px 10px;text-align:center;flex-shrink:0}
+.code-text{font-size:15px;font-weight:800;color:var(--blue);letter-spacing:3px}
+.code-label{font-size:9px;color:var(--blue);font-weight:600;margin-top:1px}
+.group-actions{display:flex;gap:8px}
+.action-btn{flex:1;padding:10px;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none;transition:.15s}
+.action-btn:active{opacity:.8}
+.btn-chat{background:var(--blue);color:#fff}
+.btn-members{background:#EEF4FF;color:var(--blue)}
+/* FAB */
+.fab{position:fixed;bottom:74px;right:18px;width:56px;height:56px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:26px;box-shadow:0 4px 16px #1976D240;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:90;-webkit-appearance:none;transition:.15s}
+.fab:active{transform:scale(.92)}
+/* CHAT */
+#chat-screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+#chat-screen.on{display:flex}
+#chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch;background:#ECE5DD}
+.msg-wrap{display:flex;flex-direction:column;max-width:78%}
+.msg-wrap.me{align-self:flex-end;align-items:flex-end}
+.msg-wrap.you{align-self:flex-start;align-items:flex-start}
+.msg-name{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:3px;padding:0 4px}
+.msg-bubble{padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.45;word-break:break-word;position:relative}
+.msg-bubble.me{background:#DCF8C6;border-radius:18px 4px 18px 18px}
+.msg-bubble.you{background:#fff;border-radius:4px 18px 18px 18px;box-shadow:0 1px 3px #00000010}
+.msg-time{font-size:10px;color:#999;margin-top:3px;padding:0 4px}
+.msg-system{align-self:center;background:#00000015;color:#555;font-size:11px;padding:4px 12px;border-radius:20px;margin:4px 0}
+#chat-bar{background:#fff;padding:10px 12px;display:flex;align-items:flex-end;gap:8px;border-top:1px solid var(--border);flex-shrink:0}
+#chat-input{flex:1;padding:10px 16px;font-size:15px;border:1.5px solid var(--border);border-radius:24px;outline:none;max-height:100px;resize:none;font-family:inherit;line-height:1.4}
+#chat-input:focus{border-color:var(--blue)}
+.send-btn{width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none}
+.loc-btn{width:44px;height:44px;border-radius:50%;background:#EEF4FF;color:var(--blue);border:none;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none}
+/* MEMBERS */
+.member-card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 2px 6px #00000008}
+.member-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;flex-shrink:0}
+.member-info{flex:1;min-width:0}
+.member-name{font-size:15px;font-weight:700}
+.member-loc{font-size:12px;color:var(--gray);margin-top:3px;line-height:1.4}
+.member-time{font-size:11px;color:#43A047;font-weight:600;margin-top:3px}
+.maps-link{display:inline-block;margin-top:6px;background:#EEF4FF;color:var(--blue);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none}
+/* MAP */
+.loc-card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 6px #00000008}
+.loc-name{font-size:15px;font-weight:700;margin-bottom:4px}
+.loc-coords{font-size:12px;color:var(--gray);margin-bottom:8px}
+/* PROFILE */
+.profile-hero{background:linear-gradient(135deg,#0D47A1,#1976D2);padding:32px 20px 24px;display:flex;flex-direction:column;align-items:center;color:#fff}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:#ffffff30;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;margin-bottom:10px;border:3px solid #ffffff50}
+.profile-name{font-size:20px;font-weight:700}
+.profile-email{font-size:13px;opacity:.7;margin-top:3px}
+.settings-group{background:var(--card);border-radius:16px;margin:12px 14px 0;overflow:hidden;box-shadow:0 2px 6px #00000008}
+.settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+.settings-row:last-child{border-bottom:none}
+.settings-icon{font-size:20px;margin-right:12px;width:24px;text-align:center}
+.settings-text{flex:1}
+.settings-label{font-size:14px;font-weight:600}
+.settings-sub{font-size:12px;color:var(--gray);margin-top:1px}
+.settings-arrow{color:#ccc;font-size:18px}
+/* SOS */
+.sos-wrap{display:flex;flex-direction:column;align-items:center;padding:32px 20px}
+.sos-btn{width:160px;height:160px;border-radius:50%;background:linear-gradient(135deg,#E53935,#B71C1C);border:none;color:#fff;font-size:36px;font-weight:900;letter-spacing:2px;cursor:pointer;box-shadow:0 0 0 12px #ffcdd2,0 0 0 24px #ffebee,0 8px 40px #E5393560;-webkit-appearance:none;transition:.15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.sos-btn:active{transform:scale(.95)}
+.sos-btn.active{animation:sosPulse 1.2s infinite}
+@keyframes sosPulse{0%,100%{box-shadow:0 0 0 12px #ffcdd2,0 0 0 24px #ffebee,0 8px 40px #E5393560}50%{box-shadow:0 0 0 18px #ef9a9a,0 0 0 36px #ffcdd2,0 8px 60px #E5393590}}
+.sos-label{font-size:11px;font-weight:600;opacity:.8;letter-spacing:1px}
+.sos-status{font-size:13px;color:var(--gray);margin-top:20px;text-align:center;max-width:260px;line-height:1.5}
+.sos-active-bar{background:#E53935;color:#fff;padding:10px 16px;display:none;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;flex-shrink:0}
+.sos-active-bar.on{display:flex}
+.sos-cancel{background:#fff;color:#E53935;border:none;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;cursor:pointer}
+/* INVITE BOX */
+.invite-box{background:#EEF4FF;border-radius:14px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.invite-code{font-size:26px;font-weight:800;color:var(--blue);letter-spacing:5px}
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 30px;color:var(--gray);text-align:center}
+.empty-icon{font-size:52px;margin-bottom:12px}
+.empty-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px}
+.empty-sub{font-size:14px;line-height:1.5}
+/* TOAST */
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#323232;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* LOC PERMISSION BANNER */
+#loc-banner{background:#FF9800;color:#fff;padding:10px 16px;font-size:13px;font-weight:600;display:none;align-items:center;justify-content:space-between;flex-shrink:0}
+#loc-banner.on{display:flex}
+#loc-banner button{background:#fff;color:#E65100;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
 
-<div id="login-page">
-  <div style="font-size:44px;text-align:center">📡</div>
-  <h1>LocationShare</h1>
-  <div class="sub">Family location & group chat</div>
-  <div class="card">
-    <h2 id="ftitle">Sign In</h2>
-    <div id="nrow" style="display:none">
+<!-- LOGIN PAGE -->
+<div class="page on" id="pg-login">
+  <div class="login-logo">📡</div>
+  <div class="login-title">LocationShare</div>
+  <div class="login-sub">Stay connected with your family</div>
+  <div class="login-card">
+    <h2 id="l-title">Welcome Back 👋</h2>
+    <div class="field" id="l-name-field" style="display:none">
       <label>Your Name</label>
-      <input type="text" id="iname" placeholder="Full name">
+      <input type="text" id="l-name" placeholder="e.g. Bibhuti">
     </div>
-    <label>Email</label>
-    <input type="email" id="iemail" placeholder="you@gmail.com">
-    <label>Password</label>
-    <input type="password" id="ipass" placeholder="Password">
-    <div class="err" id="errmsg"></div>
-    <div class="info" id="infomsg">Enter details and tap Sign In</div>
-    <input type="button" class="btn-primary" id="mainbtn" value="Sign In">
-    <input type="button" class="btn-secondary" id="togbtn" value="No account? Register">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="l-email" placeholder="you@gmail.com">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="l-pass" placeholder="Min 6 characters">
+    </div>
+    <div class="err-box" id="l-err"></div>
+    <input type="button" class="btn btn-blue" id="l-btn" value="Sign In">
+    <input type="button" class="btn btn-ghost" id="l-tog" value="Don't have an account? Register">
   </div>
 </div>
 
-<div id="app-page">
-  <header>
-    <h2 id="apptitle">📡 LocationShare</h2>
-    <input type="button" value="Out" onclick="signout()" style="background:none;border:1px solid #fff9;color:#fff;padding:4px 10px;border-radius:8px;font-size:12px;cursor:pointer;-webkit-appearance:none">
-  </header>
+<!-- MAIN APP -->
+<div class="page" id="pg-app">
+  <!-- SOS Active Bar -->
+  <div class="sos-active-bar" id="sos-bar">
+    <span>🆘 SOS ACTIVE</span>
+    <button class="sos-cancel" onclick="cancelSos()">CANCEL</button>
+  </div>
+  <!-- Location Banner -->
+  <div id="loc-banner">
+    <span>📍 Allow location to share with family</span>
+    <button onclick="requestLocation()">Allow</button>
+  </div>
+  <!-- Header -->
+  <div class="app-header">
+    <h1 id="app-title">📡 LocationShare</h1>
+    <button class="header-btn" id="hdr-back" style="display:none" onclick="goBack()">←</button>
+    <button class="header-btn" onclick="signout()">⎋</button>
+  </div>
+
+  <!-- Groups Screen -->
   <div class="screen on" id="sc-groups">
-    <div id="glist"><p style="color:#999;text-align:center;padding:30px">Loading groups...</p></div>
-    <input type="button" class="fab" value="+" onclick="newgroup()">
+    <div class="screen-pad">
+      <div class="section-label">My Groups</div>
+      <div id="groups-list"></div>
+    </div>
+    <div style="height:80px"></div>
+    <button class="fab" onclick="newgroup()">+</button>
   </div>
-  <div class="screen" id="sc-chat">
-    <div id="msgs"></div>
-    <div id="cbar">
-      <input type="text" id="cinput" placeholder="Message...">
-      <input type="button" id="csend" value="➤" onclick="sendmsg()">
+
+  <!-- Chat Screen -->
+  <div id="chat-screen">
+    <div id="chat-msgs"></div>
+    <div id="chat-bar">
+      <button class="loc-btn" onclick="sendLocation()">📍</button>
+      <textarea id="chat-input" rows="1" placeholder="Message..."></textarea>
+      <button class="send-btn" onclick="sendmsg()">➤</button>
     </div>
   </div>
+
+  <!-- Members Screen -->
+  <div class="screen" id="sc-members">
+    <div class="screen-pad">
+      <div id="members-content"></div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- Map Screen -->
   <div class="screen" id="sc-map">
-    <div style="padding:14px">
-      <div style="font-size:13px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">All Member Locations</div>
-      <div id="maplocs"><p style="color:#999;text-align:center;padding:30px">Join a group to see member locations here</p></div>
-      <input type="button" value="🔄 Refresh Locations" onclick="refreshAllLocs()" style="width:100%;background:#1976D2;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-top:10px">
+    <div class="screen-pad">
+      <div class="section-label">Live Locations</div>
+      <div id="map-content"></div>
+      <input type="button" value="🔄 Refresh" onclick="refreshLocs()" style="width:100%;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-top:8px">
     </div>
+    <div style="height:20px"></div>
   </div>
+
+  <!-- SOS Screen -->
+  <div class="screen" id="sc-sos">
+    <div class="sos-wrap">
+      <button class="sos-btn" id="sos-btn" onpointerdown="startSos()" onpointerup="cancelSosHold()" onpointerleave="cancelSosHold()">
+        SOS
+        <span class="sos-label">HOLD 3s</span>
+      </button>
+      <div class="sos-status" id="sos-status">Hold the SOS button for 3 seconds to alert all group members with your location</div>
+      <div style="margin-top:24px;width:100%">
+        <div class="section-label">Emergency Contacts</div>
+        <div id="sos-contacts"></div>
+        <input type="button" value="+ Add Contact" onclick="addContact()" style="width:100%;background:#FFF3E0;color:#E65100;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-top:8px">
+      </div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- Profile Screen -->
   <div class="screen" id="sc-profile">
-    <div style="text-align:center;padding:24px">
-      <div id="pavatar" style="width:64px;height:64px;border-radius:50%;background:#1976D2;color:#fff;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">U</div>
-      <div id="pname" style="font-size:18px;font-weight:700">User</div>
-      <div id="pemail" style="font-size:13px;color:#666;margin-top:4px"></div>
+    <div class="profile-hero">
+      <div class="profile-avatar" id="p-avatar">U</div>
+      <div class="profile-name" id="p-name">User</div>
+      <div class="profile-email" id="p-email"></div>
     </div>
-    <div style="background:#fff;margin:0 12px;border-radius:12px;overflow:hidden">
-      <div style="padding:14px 16px;border-bottom:1px solid #eee;cursor:pointer" onclick="joingroup()">
-        <b>🔑 Join Group by Code</b> <span style="float:right;color:#999">›</span>
+    <div class="settings-group">
+      <div class="settings-row" onclick="joingroup()">
+        <span class="settings-icon">🔑</span>
+        <div class="settings-text">
+          <div class="settings-label">Join Group by Code</div>
+          <div class="settings-sub">Enter invite code from family</div>
+        </div>
+        <span class="settings-arrow">›</span>
       </div>
-      <div style="padding:14px 16px">
-        <b>📍 Location Sharing</b> <span style="float:right;color:#43A047;font-size:13px">Active</span>
+      <div class="settings-row" onclick="requestLocation()">
+        <span class="settings-icon">📍</span>
+        <div class="settings-text">
+          <div class="settings-label">Enable Location</div>
+          <div class="settings-sub" id="loc-status-text">Tap to allow location access</div>
+        </div>
+        <span class="settings-arrow">›</span>
       </div>
     </div>
-    <div style="padding:16px 12px">
-      <input type="button" value="Sign Out" onclick="signout()" style="width:100%;background:#d32f2f;color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none">
+    <div class="settings-group" style="margin-top:10px">
+      <div class="settings-row" onclick="signout()" style="color:#E53935">
+        <span class="settings-icon">🚪</span>
+        <div class="settings-text">
+          <div class="settings-label" style="color:#E53935">Sign Out</div>
+        </div>
+      </div>
     </div>
+    <div style="height:80px"></div>
   </div>
-  <div class="tabs">
-    <div class="tab on" onclick="showsc('groups',this)">👥<br>Groups</div>
-    <div class="tab" onclick="showsc('chat',this)">💬<br>Chat</div>
-    <div class="tab" onclick="showsc('map',this)">🗺️<br>Map</div>
-    <div class="tab" onclick="showsc('profile',this)">👤<br>Profile</div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="nav-item on" onclick="showScreen('groups',this)">
+      <span class="nav-icon">👥</span>Groups
+    </button>
+    <button class="nav-item" onclick="showScreen('map',this)">
+      <span class="nav-icon">🗺️</span>Map
+    </button>
+    <button class="nav-item" onclick="showScreen('sos',this)" style="color:#E53935">
+      <span class="nav-icon">🆘</span>SOS
+    </button>
+    <button class="nav-item" onclick="showScreen('profile',this)">
+      <span class="nav-icon">👤</span>Profile
+    </button>
   </div>
 </div>
 
-<!-- Firebase loaded FIRST before anything else -->
+<!-- TOAST -->
+<div id="toast"></div>
+
 <script>
-var FBURL = "https://identitytoolkit.googleapis.com/v1/accounts:";
-var DBURL = "https://locationshare-da6a6-default-rtdb.firebaseio.com";
-var FSURL = "https://firestore.googleapis.com/v1/projects/locationshare-da6a6/databases/(default)/documents";
-var APIKEY = "AIzaSyDQUj7_pPJ5xanEFWfZbwwiDZt2gJY1E1E";
+var DBURL='https://locationshare-da6a6-default-rtdb.firebaseio.com';
+var APIKEY='AIzaSyDQUj7_pPJ5xanEFWfZbwwiDZt2gJY1E1E';
+var me=null,myGroups=[],memberLocs={},curGid=null,msgTimer=null,sosTimer=null,sosActive=false,locWatchId=null;
+var isReg=false,prevScreen='groups';
+var contacts=JSON.parse(localStorage.getItem('sos_contacts')||'[]');
 
-var me = null;
-var myGroups = [];
-var curGid = null;
-var isReg = false;
-var msgTimer = null;
-var lastMsgTime = 0;
+// ── AUTH ──────────────────────────────────────────────
+document.getElementById('l-btn').onclick=doAuth;
+document.getElementById('l-tog').onclick=toggleMode;
+document.getElementById('chat-input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendmsg();}});
 
-function err(m){ 
-  document.getElementById('infomsg').style.display='none';
-  var e=document.getElementById('errmsg'); 
-  e.textContent=m; e.style.display='block'; 
-}
-function info(m){ 
-  document.getElementById('errmsg').style.display='none';
-  var i=document.getElementById('infomsg'); 
-  i.textContent=m; i.style.display='block'; 
+function toggleMode(){
+  isReg=!isReg;
+  document.getElementById('l-title').textContent=isReg?'Create Account 🚀':'Welcome Back 👋';
+  document.getElementById('l-btn').value=isReg?'Register':'Sign In';
+  document.getElementById('l-tog').value=isReg?'Already registered? Sign In':"Don't have an account? Register";
+  document.getElementById('l-name-field').style.display=isReg?'block':'none';
+  document.getElementById('l-err').style.display='none';
 }
 
-// REST API based auth - no Firebase SDK needed!
 function doAuth(){
-  var em=document.getElementById('iemail').value.trim();
-  var pw=document.getElementById('ipass').value;
-  var nm=document.getElementById('iname').value.trim();
-  if(!em||!pw){err('Enter email and password');return;}
-  if(isReg&&!nm){err('Enter your name');return;}
-  
-  info('Signing in...');
-  document.getElementById('mainbtn').disabled=true;
-  
-  var endpoint = isReg ? 'signUp?key='+APIKEY : 'signInWithPassword?key='+APIKEY;
-  var body = {email:em,password:pw,returnSecureToken:true};
-  if(isReg) body.displayName=nm;
-  
-  fetch('https://identitytoolkit.googleapis.com/v1/accounts:'+endpoint, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(body)
-  })
-  .then(function(r){return r.json();})
+  var em=document.getElementById('l-email').value.trim();
+  var pw=document.getElementById('l-pass').value;
+  var nm=document.getElementById('l-name').value.trim();
+  var err=document.getElementById('l-err');
+  err.style.display='none';
+  if(!em||!pw){err.textContent='Enter email and password';err.style.display='block';return;}
+  if(isReg&&!nm){err.textContent='Enter your name';err.style.display='block';return;}
+  document.getElementById('l-btn').value='Please wait...';
+  document.getElementById('l-btn').disabled=true;
+  var ep=isReg?'signUp':'signInWithPassword';
+  fetch('https://identitytoolkit.googleapis.com/v1/accounts:'+ep+'?key='+APIKEY,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:em,password:pw,returnSecureToken:true})
+  }).then(function(r){return r.json();})
   .then(function(d){
     if(d.error){
       var msg=d.error.message||'Failed';
-      if(msg==='EMAIL_NOT_FOUND') msg='No account with this email';
-      if(msg==='INVALID_PASSWORD') msg='Wrong password';
-      if(msg==='INVALID_LOGIN_CREDENTIALS') msg='Wrong email or password';
-      if(msg==='EMAIL_EXISTS') msg='Email already registered - Sign In instead';
-      if(msg==='WEAK_PASSWORD : Password should be at least 6 characters') msg='Password too short (min 6 chars)';
-      err('❌ '+msg);
-      document.getElementById('mainbtn').disabled=false;
+      if(msg==='EMAIL_NOT_FOUND'||msg==='INVALID_LOGIN_CREDENTIALS') msg='Wrong email or password';
+      if(msg==='EMAIL_EXISTS') msg='Email already registered — Sign In instead';
+      if(msg.includes('WEAK_PASSWORD')) msg='Password too short (min 6 chars)';
+      err.textContent='❌ '+msg;err.style.display='block';
+      document.getElementById('l-btn').value=isReg?'Register':'Sign In';
+      document.getElementById('l-btn').disabled=false;
       return;
     }
-    // Success!
-    me = {
-      uid: d.localId,
-      email: d.email,
-      displayName: d.displayName || nm || d.email,
-      idToken: d.idToken,
-      refreshToken: d.refreshToken
-    };
-    localStorage.setItem('ls_me', JSON.stringify(me));
+    me={uid:d.localId,email:d.email,displayName:d.displayName||nm||d.email,idToken:d.idToken};
+    if(isReg&&nm) me.displayName=nm;
+    localStorage.setItem('ls_me',JSON.stringify(me));
+    saveProfile();
     enterApp();
-  })
-  .catch(function(e){
-    err('❌ Network error. Check connection.');
-    document.getElementById('mainbtn').disabled=false;
+  }).catch(function(e){
+    err.textContent='❌ Network error';err.style.display='block';
+    document.getElementById('l-btn').value=isReg?'Register':'Sign In';
+    document.getElementById('l-btn').disabled=false;
   });
 }
 
-function enterApp(){
-  document.getElementById('login-page').style.display='none';
-  document.getElementById('app-page').style.display='block';
-  document.getElementById('pname').textContent=me.displayName||me.email;
-  document.getElementById('pemail').textContent=me.email;
-  document.getElementById('pavatar').textContent=(me.displayName||'U').charAt(0).toUpperCase();
-  // Save user profile so others can see name
+function saveProfile(){
+  if(!me) return;
   fetch(DBURL+'/users/'+me.uid+'.json',{
     method:'PUT',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({uid:me.uid,displayName:me.displayName||me.email,email:me.email})
+    body:JSON.stringify({uid:me.uid,displayName:me.displayName,email:me.email})
   }).catch(function(){});
+}
+
+function enterApp(){
+  document.getElementById('pg-login').classList.remove('on');
+  document.getElementById('pg-app').classList.add('on');
+  document.getElementById('p-name').textContent=me.displayName;
+  document.getElementById('p-email').textContent=me.email;
+  document.getElementById('p-avatar').textContent=me.displayName.charAt(0).toUpperCase();
   loadGroups();
-  startLocation();
+  requestLocation();
+  renderSosContacts();
 }
-
-function copyCode(el){
-  var code=el.getAttribute('data-code')||el.dataset.code||'';
-  if(!code){alert('Could not get code');return;}
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(code).then(function(){
-      alert('✅ Invite code "'+code+'" copied!\n\nPaste it in WhatsApp and share with family.');
-    }).catch(function(){
-      prompt('Long-press and copy this code:',code);
-    });
-  } else {
-    prompt('Long-press and copy this code:',code);
-  }
-}
-
-function leaveGroup(gid){
-  var g=myGroups.find(function(x){return x.id===gid;});
-  if(!confirm('Leave "'+( g?g.name:'group')+'"? You will need the invite code to rejoin.')) return;
-  fetch(DBURL+'/groups/'+gid+'.json')
-    .then(function(r){return r.json();})
-    .then(function(data){
-      var members=(data.members||[]).filter(function(uid){return uid!==me.uid;});
-      return fetch(DBURL+'/groups/'+gid+'/members.json',{
-        method:'PUT',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(members)
-      });
-    })
-    .then(function(){
-      alert('You have left the group.');
-      showsc('groups', document.querySelectorAll('.tab')[0]);
-      loadGroups();
-    })
-    .catch(function(e){alert('Error: '+e.message);});
-}
-
-function deleteGroup(gid){
-  var g=myGroups.find(function(x){return x.id===gid;});
-  if(!confirm('DELETE "'+( g?g.name:'group')+'"? This cannot be undone. All messages will be lost.')) return;
-  // Delete group and its messages
-  fetch(DBURL+'/groups/'+gid+'.json',{method:'DELETE'})
-    .then(function(){
-      return fetch(DBURL+'/messages/'+gid+'.json',{method:'DELETE'});
-    })
-    .then(function(){
-      alert('Group deleted.');
-      showsc('groups',document.querySelectorAll('.tab')[0]);
-      loadGroups();
-    })
-    .catch(function(e){alert('Error: '+e.message);});
-}
-
-function timeAgo(ts){
-  if(!ts) return 'unknown';
-  var diff=Date.now()-ts;
-  if(diff<60000) return 'just now';
-  if(diff<3600000) return Math.floor(diff/60000)+'m ago';
-  return Math.floor(diff/3600000)+'h ago';
-}
-
-var memberLocs={};
 
 function signout(){
   if(!confirm('Sign out?')) return;
   localStorage.removeItem('ls_me');
   me=null;
-  document.getElementById('login-page').style.display='flex';
-  document.getElementById('app-page').style.display='none';
+  document.getElementById('pg-app').classList.remove('on');
+  document.getElementById('pg-login').classList.add('on');
+  document.getElementById('l-btn').value='Sign In';
+  document.getElementById('l-btn').disabled=false;
 }
 
-function tog(){
-  isReg=!isReg;
-  document.getElementById('ftitle').textContent=isReg?'Create Account':'Sign In';
-  document.getElementById('mainbtn').value=isReg?'Register':'Sign In';
-  document.getElementById('togbtn').value=isReg?'Already registered? Sign In':'No account? Register';
-  document.getElementById('nrow').style.display=isReg?'block':'none';
-  document.getElementById('errmsg').style.display='none';
-  info(isReg?'Fill all fields and tap Register':'Enter details and tap Sign In');
+// ── LOCATION ───────────────────────────────────────────
+function requestLocation(){
+  if(!navigator.geolocation){toast('Geolocation not supported');return;}
+  navigator.geolocation.getCurrentPosition(function(pos){
+    document.getElementById('loc-banner').classList.remove('on');
+    document.getElementById('loc-status-text').textContent='Location active ✅';
+    startWatchingLocation();
+  },function(err){
+    document.getElementById('loc-banner').classList.add('on');
+    document.getElementById('loc-status-text').textContent='Location blocked — tap to allow';
+    toast('⚠️ Please allow location access in browser settings');
+  },{enableHighAccuracy:true,timeout:10000});
 }
 
-document.getElementById('mainbtn').onclick=doAuth;
-document.getElementById('togbtn').onclick=tog;
-document.getElementById('cinput').onkeyup=function(e){if(e.key==='Enter')sendmsg();};
-
-// Check saved session
-var saved=localStorage.getItem('ls_me');
-if(saved){
-  try{me=JSON.parse(saved);enterApp();}catch(e){localStorage.removeItem('ls_me');}
-} else {
-  document.getElementById('login-page').style.display='flex';
-}
-document.getElementById('app-page').style.display=me?'block':'none';
-if(me) document.getElementById('login-page').style.display='none';
-
-// SCREENS
-function showsc(name,btn){
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
-  document.getElementById('sc-'+name).classList.add('on');
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
-  if(btn) btn.classList.add('on');
-  if(name==='chat'&&curGid){
-    var g=myGroups.find(function(x){return x.id===curGid;});
-    document.getElementById('apptitle').textContent='💬 '+(g?g.name:'Chat');
-  } else {
-    document.getElementById('apptitle').textContent='📡 LocationShare';
-  }
+function startWatchingLocation(){
+  if(locWatchId) navigator.geolocation.clearWatch(locWatchId);
+  locWatchId=navigator.geolocation.watchPosition(function(pos){
+    var loc={uid:me.uid,displayName:me.displayName,lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy,timestamp:Date.now(),sharing:true};
+    memberLocs[me.uid]=loc;
+    fetch(DBURL+'/locations/'+me.uid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(loc)}).catch(function(){});
+    document.getElementById('loc-status-text').textContent='📍 Location sharing active';
+    // Update map if visible
+    if(document.getElementById('sc-map').classList.contains('on')) refreshLocs();
+  },function(){},{enableHighAccuracy:true,maximumAge:15000,timeout:20000});
 }
 
-// GROUPS via Firestore REST
+// ── GROUPS ─────────────────────────────────────────────
+var COLORS=['#E53935','#8E24AA','#1E88E5','#43A047','#FB8C00','#00ACC1','#6D4C41','#3949AB'];
+
 function loadGroups(){
   if(!me) return;
-  fetch(DBURL+'/groups.json',{
-    headers:{'Content-Type':'application/json'}
-  })
-  .then(function(r){return r.json();})
+  fetch(DBURL+'/groups.json').then(function(r){return r.json();})
   .then(function(data){
     myGroups=[];
     if(data&&!data.error){
       Object.keys(data).forEach(function(gid){
         var g=data[gid];
-        if(!g) return;
-        var members=g.members||[];
-        if(members.indexOf(me.uid)<0) return; // not a member
-        myGroups.push({
-          id:gid,
-          name:g.name||'Group',
-          lastMessage:g.lastMessage||'',
-          members:members,
-          inviteCode:g.inviteCode||''
-        });
+        if(g&&(g.members||[]).indexOf(me.uid)>=0) myGroups.push(Object.assign({id:gid},g));
       });
     }
     myGroups.sort(function(a,b){return (b.lastMessageTime||0)-(a.lastMessageTime||0);});
     renderGroups();
-    setTimeout(loadGroups,15000);
-  })
-  .catch(function(e){
-    console.log('loadGroups error',e);
-    setTimeout(loadGroups,15000);
-  });
+  }).catch(function(){});
+  setTimeout(loadGroups,20000);
 }
 
 function renderGroups(){
-  var list=document.getElementById('glist');
+  var el=document.getElementById('groups-list');
   if(!myGroups.length){
-    list.innerHTML='<p style="color:#999;text-align:center;padding:30px">No groups yet.<br><br>Tap <b>+</b> to create one!<br>Share the code with family.</p>';
+    el.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">No groups yet</div><div class="empty-sub">Tap + to create a family group and share the invite code</div></div>';
     return;
   }
-  list.innerHTML=myGroups.map(function(g,gi){
-    myGroups[gi]=g; // ensure index
-    return '<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;box-shadow:0 1px 3px #0001">'
-      +'<div style="display:flex;align-items:center;gap:12px">'
-      +'<div class="gav">'+g.name.charAt(0).toUpperCase()+'</div>'
-      +'<div style="flex:1;min-width:0">'
-      +'<div style="font-weight:700;font-size:15px">'+g.name+'</div>'
-      +'<div style="font-size:12px;color:#999;margin-top:2px">'+(g.lastMessage||'No messages yet')+'</div>'
-      +'<div style="font-size:11px;color:#1976D2;margin-top:3px">👥 '+g.members.length+' members</div>'
+  el.innerHTML=myGroups.map(function(g,i){
+    var color=COLORS[g.name.charCodeAt(0)%COLORS.length];
+    var last=g.lastMessage||'Tap to start chatting';
+    return '<div class="group-card">'
+      +'<div class="group-top">'
+      +'<div class="group-avatar" style="background:'+color+'">'+g.name.charAt(0).toUpperCase()+'</div>'
+      +'<div class="group-info"><div class="group-name">'+g.name+'</div><div class="group-meta">👥 '+(g.members||[]).length+' members • '+last+'</div></div>'
+      +'<div class="code-badge" data-code="'+g.inviteCode+'" onclick="copyCode(this)"><div class="code-text">'+g.inviteCode+'</div><div class="code-label">📋 COPY</div></div>'
       +'</div>'
-      +'<div data-code="'+g.inviteCode+'" onclick="copyCode(this)" style="text-align:center;cursor:pointer;background:#e3f2fd;border-radius:8px;padding:6px 10px;flex-shrink:0">'
-      +'<div style="font-size:14px;font-weight:800;color:#1976D2;letter-spacing:2px">'+g.inviteCode+'</div>'
-      +'<div style="font-size:9px;color:#1976D2;margin-top:2px">COPY</div>'
-      +'</div>'
-      +'</div>'
-      +'<div style="display:flex;gap:8px;margin-top:10px">'
-      +'<input type="button" value="💬 Chat" data-gid="'+g.id+'" data-gname="'+g.name+'" onclick="var el=this;openChat(el.dataset.gid,el.dataset.gname)" style="flex:1;background:#1976D2;color:#fff;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
-      +'<input type="button" value="👥 Members" data-gid="'+g.id+'" onclick="showGroupInfo(this.dataset.gid)" style="flex:1;background:#e3f2fd;color:#1976D2;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
-      +'</div>'
-      +'</div>';
+      +'<div class="group-actions">'
+      +'<input type="button" class="action-btn btn-chat" value="💬 Chat" data-gid="'+g.id+'" data-gname="'+g.name+'" onclick="openChat(this.dataset.gid,this.dataset.gname)">'
+      +'<input type="button" class="action-btn btn-members" value="👥 Members" data-gid="'+g.id+'" onclick="openMembers(this.dataset.gid)">'
+      +'</div></div>';
   }).join('');
 }
 
-function esc(s){return (s||'').replace(/'/g,"\\'").replace(/</g,'&lt;');}
-
 function newgroup(){
-  var name=prompt('Group name (e.g. Family):');
+  var name=prompt('Group name (e.g. Family, Friends):');
   if(!name||!name.trim()) return;
   var code=Math.random().toString(36).substr(2,6).toUpperCase();
-  var gid='grp_'+Date.now();
-  var group={
-    name:name.trim(),
-    createdBy:me.uid,
-    members:[me.uid],
-    admins:[me.uid],
-    inviteCode:code,
-    lastMessage:'',
-    lastMessageTime:Date.now(),
-    createdAt:Date.now()
-  };
+  var gid='g'+Date.now();
   fetch(DBURL+'/groups/'+gid+'.json',{
-    method:'PUT',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(group)
-  })
-  .then(function(r){return r.json();})
-  .then(function(d){
-    if(d.error){alert('Error: '+d.error);return;}
-    alert('✅ Group "'+name+'" created!\nInvite code: '+code+'\n\nShare this code with family!');
+    method:'PUT',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:name.trim(),createdBy:me.uid,members:[me.uid],admins:[me.uid],inviteCode:code,lastMessage:'',lastMessageTime:Date.now(),createdAt:Date.now()})
+  }).then(function(){
+    toast('✅ Group created! Code: '+code);
     loadGroups();
-  })
-  .catch(function(e){alert('Error creating group: '+e.message);});
+  }).catch(function(e){toast('Error: '+e.message);});
 }
 
 function joingroup(){
-  var code=prompt('Enter 6-character invite code:');
+  var code=prompt('Enter invite code:');
   if(!code) return;
   code=code.trim().toUpperCase();
-  // Fetch ALL groups and find matching code
-  fetch(DBURL+'/groups.json',{
-    headers:{'Content-Type':'application/json'}
-  })
-  .then(function(r){return r.json();})
+  fetch(DBURL+'/groups.json').then(function(r){return r.json();})
   .then(function(data){
-    if(!data||data.error){alert('Error loading groups');return;}
-    var found=null, foundId=null;
-    Object.keys(data).forEach(function(gid){
-      if(data[gid]&&data[gid].inviteCode===code){
-        found=data[gid]; foundId=gid;
-      }
-    });
-    if(!found){alert('No group found with code: '+code+'\nMake sure you entered it correctly (case-insensitive)');return;}
-    var members=found.members||[];
-    if(members.indexOf(me.uid)>=0){alert('You are already in "'+found.name+'"!');return;}
+    var gid=null,g=null;
+    if(data) Object.keys(data).forEach(function(k){if(data[k]&&data[k].inviteCode===code){gid=k;g=data[k];}});
+    if(!gid){toast('❌ No group found with code: '+code);return;}
+    var members=(g.members||[]);
+    if(members.indexOf(me.uid)>=0){toast('Already in this group!');return;}
     members.push(me.uid);
-    fetch(DBURL+'/groups/'+foundId+'/members.json',{
-      method:'PUT',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(members)
-    })
-    .then(function(){alert('✅ Joined "'+found.name+'"!');loadGroups();})
-    .catch(function(e){alert('Error joining: '+e.message);});
-  })
-  .catch(function(e){alert('Network error: '+e.message);});
+    fetch(DBURL+'/groups/'+gid+'/members.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(members)})
+    .then(function(){toast('✅ Joined '+g.name+'!');loadGroups();});
+  });
 }
 
-// CHAT
+function copyCode(el){
+  var code=el.dataset.code||el.getAttribute('data-code');
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(code).then(function(){toast('✅ Code "'+code+'" copied! Share with family');}).catch(function(){prompt('Copy this code:',code);});
+  } else { prompt('Copy this code:',code); }
+}
+
+// ── CHAT ───────────────────────────────────────────────
 function openChat(gid,gname){
   curGid=gid;
-  document.getElementById('apptitle').textContent='💬 '+gname;
-  showsc('chat',document.querySelectorAll('.tab')[1]);
-  document.getElementById('msgs').innerHTML='<p style="text-align:center;color:#999;padding:20px;font-size:13px">Loading...</p>';
+  document.getElementById('app-title').textContent='💬 '+gname;
+  document.getElementById('hdr-back').style.display='block';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('chat-screen').classList.add('on');
+  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('chat-msgs').innerHTML='<div style="text-align:center;color:#999;padding:30px;font-size:13px">Loading messages...</div>';
+  if(msgTimer) clearTimeout(msgTimer);
   loadMsgs();
+  prevScreen='chat';
+}
+
+function goBack(){
+  document.getElementById('chat-screen').classList.remove('on');
+  document.getElementById('sc-members').classList.remove('on');
+  document.getElementById('hdr-back').style.display='none';
+  document.getElementById('app-title').textContent='📡 LocationShare';
+  document.getElementById('sc-groups').classList.add('on');
+  document.querySelectorAll('.nav-item')[0].classList.add('on');
+  if(msgTimer){clearTimeout(msgTimer);msgTimer=null;}
+  prevScreen='groups';
+}
+
+function showScreen(name,btn){
+  document.getElementById('chat-screen').classList.remove('on');
+  document.getElementById('sc-members').classList.remove('on');
+  document.getElementById('hdr-back').style.display='none';
+  document.getElementById('app-title').textContent='📡 LocationShare';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('sc-'+name).classList.add('on');
+  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
+  if(btn) btn.classList.add('on');
+  if(name==='map') refreshLocs();
+  if(msgTimer&&name!=='chat'){clearTimeout(msgTimer);msgTimer=null;}
 }
 
 function loadMsgs(){
   if(!curGid||!me) return;
-  fetch(DBURL+'/messages/'+curGid+'.json?orderBy=%22timestamp%22',{
-    headers:{'Content-Type':'application/json'}
-  })
+  fetch(DBURL+'/messages/'+curGid+'.json?orderBy=%22timestamp%22')
   .then(function(r){return r.json();})
   .then(function(data){
-    var box=document.getElementById('msgs');
-    if(!data||data.error){box.innerHTML='<p style="text-align:center;color:#999;padding:20px;font-size:13px">No messages yet! Say hello 👋</p>';return;}
-    var msgs=Object.keys(data).map(function(k){return data[k];});
-    msgs.sort(function(a,b){return (a.timestamp||0)-(b.timestamp||0);});
-    if(!msgs.length){box.innerHTML='<p style="text-align:center;color:#999;padding:20px;font-size:13px">No messages yet!</p>';return;}
+    var box=document.getElementById('chat-msgs');
+    if(!data||data.error){box.innerHTML='<div class="msg-system">No messages yet. Say hello! 👋</div>';return;}
+    var msgs=Object.keys(data).map(function(k){return data[k];}).sort(function(a,b){return (a.timestamp||0)-(b.timestamp||0);});
     box.innerHTML=msgs.map(function(m){
       var mine=m.senderId===me.uid;
       var time=m.timestamp?new Date(m.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
-      return '<div class="mw '+(mine?'me':'you')+'">'
-        +(!mine?'<div class="mn">'+(m.senderName||'')+'</div>':'')
-        +'<div class="mb '+(mine?'me':'you')+'">'+m.content+'<div class="mt">'+time+'</div></div>'
-        +'</div>';
+      if(m.type==='system') return '<div class="msg-system">'+m.content+'</div>';
+      if(m.type==='location') return '<div class="msg-wrap '+(mine?'me':'you')+'">'
+        +(!mine?'<div class="msg-name">'+m.senderName+'</div>':'')
+        +'<a href="https://maps.google.com/?q='+m.lat+','+m.lng+'" target="_blank" style="display:block;background:'+(mine?'#DCF8C6':'#fff')+';border-radius:14px;padding:10px 14px;text-decoration:none;color:var(--text);box-shadow:0 1px 3px #00000010">'
+        +'<div style="font-size:13px;font-weight:700;color:var(--blue)">📍 Shared Location</div>'
+        +'<div style="font-size:12px;color:var(--gray);margin-top:2px">'+m.lat.toFixed(4)+', '+m.lng.toFixed(4)+'</div>'
+        +'<div style="font-size:12px;color:var(--blue);margin-top:4px;font-weight:600">Tap to open in Maps →</div>'
+        +'</a>'
+        +'<div class="msg-time">'+time+'</div></div>';
+      return '<div class="msg-wrap '+(mine?'me':'you')+'">'
+        +(!mine?'<div class="msg-name">'+m.senderName+'</div>':'')
+        +'<div class="msg-bubble '+(mine?'me':'you')+'">'+m.content+'</div>'
+        +'<div class="msg-time">'+time+'</div></div>';
     }).join('');
     box.scrollTop=box.scrollHeight;
     if(msgTimer) clearTimeout(msgTimer);
     msgTimer=setTimeout(loadMsgs,5000);
-  })
-  .catch(function(e){console.log('msgs error',e);if(msgTimer)clearTimeout(msgTimer);msgTimer=setTimeout(loadMsgs,10000);});
+  }).catch(function(){if(msgTimer)clearTimeout(msgTimer);msgTimer=setTimeout(loadMsgs,10000);});
 }
 
 function sendmsg(){
-  var txt=document.getElementById('cinput').value.trim();
-  if(!txt||!curGid||!me) return;
-  document.getElementById('cinput').value='';
-  var msgid='msg_'+Date.now();
-  fetch(DBURL+'/messages/'+curGid+'/'+msgid+'.json',{
-    method:'PUT',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({senderId:me.uid,senderName:me.displayName||me.email,content:txt,timestamp:Date.now()})
-  }).then(function(){loadMsgs();}).catch(function(){});
-  fetch(DBURL+'/groups/'+curGid+'.json',{
-    method:'PATCH',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({lastMessage:txt,lastMessageTime:Date.now()})
-  }).catch(function(){});
+  var txt=document.getElementById('chat-input').value.trim();
+  if(!txt||!curGid) return;
+  document.getElementById('chat-input').value='';
+  document.getElementById('chat-input').style.height='';
+  var msg={senderId:me.uid,senderName:me.displayName,content:txt,timestamp:Date.now(),type:'text'};
+  fetch(DBURL+'/messages/'+curGid+'/m'+Date.now()+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)}).then(function(){loadMsgs();});
+  fetch(DBURL+'/groups/'+curGid+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({lastMessage:txt,lastMessageTime:Date.now()})}).catch(function(){});
 }
 
-
-// LOCATION
-function refreshAllLocs(){
-  var allMembers=[];
-  myGroups.forEach(function(g){ 
-    g.members.forEach(function(uid){ 
-      if(allMembers.indexOf(uid)<0) allMembers.push(uid); 
-    }); 
-  });
-  if(!allMembers.length){
-    document.getElementById('maplocs').innerHTML='<p style="color:#999;text-align:center;padding:30px">Join a group first</p>';
-    return;
-  }
-  document.getElementById('maplocs').innerHTML='<p style="color:#999;text-align:center;padding:20px">Loading locations...</p>';
-  var promises=allMembers.map(function(uid){
-    return fetch(DBURL+'/locations/'+uid+'.json')
-      .then(function(r){return r.json();})
-      .then(function(d){ if(d&&!d.error) memberLocs[uid]=d; })
-      .catch(function(){});
-  });
-  Promise.all(promises).then(function(){
-    var cards=allMembers.map(function(uid){
-      var loc=memberLocs[uid];
-      var isMe=uid===me.uid;
-      var name=loc?loc.displayName:(isMe?me.displayName:'Member');
-      var initial=(name||'?').charAt(0).toUpperCase();
-      if(!loc) return '<div style="background:#fff;border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:#ccc;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">'+initial+'</div><div><div style="font-weight:700">'+name+(isMe?' (You)':'')+'</div><div style="font-size:12px;color:#999">No location yet</div></div></div>';
-      return '<div style="background:#fff;border-radius:12px;padding:12px;margin-bottom:8px">'
-        +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
-        +'<div style="width:36px;height:36px;border-radius:50%;background:'+(isMe?'#1976D2':'#43A047')+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">'+initial+'</div>'
-        +'<div><div style="font-weight:700;font-size:14px">'+name+(isMe?' (You)':'')+'</div>'
-        +'<div style="font-size:11px;color:#666">Updated '+timeAgo(loc.timestamp)+'</div></div>'
-        +'</div>'
-        +'<div style="font-size:12px;color:#666;margin-bottom:8px">📍 '+loc.lat.toFixed(5)+', '+loc.lng.toFixed(5)+'</div>'
-        +'<a href="https://maps.google.com/?q='+loc.lat+','+loc.lng+'" target="_blank" style="display:block;text-align:center;background:#1976D2;color:#fff;padding:8px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">🗺️ Open in Google Maps</a>'
-        +'</div>';
-    }).join('');
-    document.getElementById('maplocs').innerHTML=cards||'<p style="color:#999;text-align:center;padding:20px">No locations shared yet</p>';
-  });
+function sendLocation(){
+  if(!curGid) return;
+  var loc=memberLocs[me.uid];
+  if(!loc){toast('📍 Getting your location...');requestLocation();return;}
+  var msg={senderId:me.uid,senderName:me.displayName,content:'📍 Location',lat:loc.lat,lng:loc.lng,timestamp:Date.now(),type:'location'};
+  fetch(DBURL+'/messages/'+curGid+'/m'+Date.now()+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)}).then(function(){loadMsgs();});
+  fetch(DBURL+'/groups/'+curGid+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({lastMessage:'📍 Location',lastMessageTime:Date.now()})}).catch(function(){});
 }
 
-function startLocation(){
-  if(!navigator.geolocation||!me) return;
-  navigator.geolocation.watchPosition(function(pos){
-    var lat=pos.coords.latitude, lng=pos.coords.longitude;
-    var locData={uid:me.uid,displayName:me.displayName||me.email,lat:lat,lng:lng,timestamp:Date.now(),sharing:true};
-    memberLocs[me.uid]=locData;
-    // Store in RTDB
-    fetch(DBURL+'/locations/'+me.uid+'.json',{
-      method:'PUT',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(locData)
-    }).catch(function(){});
-    // Update map screen
-    document.getElementById('maplocs').innerHTML='<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:8px"><b>📍 My Location</b><div style="font-size:13px;color:#666;margin-top:6px">'+lat.toFixed(5)+', '+lng.toFixed(5)+'</div><a href="https://maps.google.com/?q='+lat+','+lng+'" target="_blank" style="display:inline-block;margin-top:8px;background:#1976D2;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;text-decoration:none">📍 Open in Google Maps</a></div>';
-  },{enableHighAccuracy:true,maximumAge:10000});
-  // Also poll other members locations every 15s
-  setInterval(function(){ loadMemberLocations(); if(document.getElementById('sc-map').classList.contains('on')) refreshAllLocs(); }, 15000);
-}
-
-function loadMemberLocations(){
-  if(!me||!myGroups.length) return;
-  var allMembers=[];
-  myGroups.forEach(function(g){ g.members.forEach(function(uid){ if(allMembers.indexOf(uid)<0) allMembers.push(uid); }); });
-  allMembers.forEach(function(uid){
-    if(uid===me.uid) return;
-    fetch(DBURL+'/locations/'+uid+'.json')
-      .then(function(r){return r.json();})
-      .then(function(d){ if(d&&!d.error) memberLocs[uid]=d; })
-      .catch(function(){});
-  });
-}
-
-function showGroupInfo(gid){
+// ── MEMBERS ─────────────────────────────────────────────
+function openMembers(gid){
   var g=myGroups.find(function(x){return x.id===gid;});
   if(!g) return;
   curGid=gid;
-  showsc('chat',document.querySelectorAll('.tab')[1]);
-  document.getElementById('apptitle').textContent='👥 '+g.name;
-  if(msgTimer) clearTimeout(msgTimer);
-  document.getElementById('msgs').innerHTML='<p style="text-align:center;color:#999;padding:20px">Loading member locations...</p>';
-  var promises=g.members.map(function(uid){
-    var p1=fetch(DBURL+'/locations/'+uid+'.json')
-      .then(function(r){return r.json();})
-      .then(function(d){ if(d&&!d.error&&d.lat) memberLocs[uid]=d; })
-      .catch(function(){});
-    var p2=fetch(DBURL+'/users/'+uid+'.json')
-      .then(function(r){return r.json();})
-      .then(function(d){
-        if(d&&d.displayName){
-          if(!memberLocs[uid]) memberLocs[uid]={};
-          memberLocs[uid].displayName=d.displayName;
-        }
-      }).catch(function(){});
+  document.getElementById('app-title').textContent='👥 '+g.name;
+  document.getElementById('hdr-back').style.display='block';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('sc-members').classList.add('on');
+  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('members-content').innerHTML='<div style="text-align:center;color:#999;padding:30px">Loading...</div>';
+  
+  var t=setTimeout(function(){renderMembers(g,gid);},8000);
+  var proms=g.members.map(function(uid){
+    var p1=fetch(DBURL+'/locations/'+uid+'.json').then(function(r){return r.json();}).then(function(d){if(d&&d.lat) memberLocs[uid]=Object.assign(memberLocs[uid]||{},d);}).catch(function(){});
+    var p2=fetch(DBURL+'/users/'+uid+'.json').then(function(r){return r.json();}).then(function(d){if(d&&d.displayName){if(!memberLocs[uid]) memberLocs[uid]={};memberLocs[uid].displayName=d.displayName;}}).catch(function(){});
     return Promise.all([p1,p2]);
   });
-  Promise.all(promises).then(function(){
-    renderMemberList(g,gid);
+  Promise.all(proms).then(function(){clearTimeout(t);renderMembers(g,gid);});
+}
+
+function renderMembers(g,gid){
+  var isAdmin=(g.admins||[]).indexOf(me.uid)>=0||g.createdBy===me.uid;
+  var html='<div class="invite-box"><div><div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px">Invite Code</div><div class="invite-code">'+g.inviteCode+'</div></div>'
+    +'<input type="button" value="📋 Copy" data-code="'+g.inviteCode+'" onclick="copyCode(this)" style="background:var(--blue);color:#fff;border:none;border-radius:12px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none"></div>';
+  html+=g.members.map(function(uid){
+    var isMe=uid===me.uid;
+    var loc=memberLocs[uid]||{};
+    var name=loc.displayName||(isMe?me.displayName:'Member');
+    var color=COLORS[name.charCodeAt(0)%COLORS.length];
+    var hasLoc=loc.lat&&loc.lng;
+    return '<div class="member-card">'
+      +'<div class="member-avatar" style="background:'+(isMe?'var(--blue)':color)+'">'+name.charAt(0).toUpperCase()+'</div>'
+      +'<div class="member-info"><div class="member-name">'+name+(isMe?' (You)':'')+'</div>'
+      +(hasLoc?'<div class="member-loc">📍 '+loc.lat.toFixed(4)+', '+loc.lng.toFixed(4)+'</div><div class="member-time">'+timeAgo(loc.timestamp)+'</div><a class="maps-link" href="https://maps.google.com/?q='+loc.lat+','+loc.lng+'" target="_blank">🗺️ Open in Maps</a>':'<div class="member-loc">📍 Location not shared yet</div>')
+      +'</div></div>';
+  }).join('');
+  html+='<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">';
+  html+='<input type="button" value="💬 Open Chat" data-gid="'+gid+'" data-gname="'+g.name+'" onclick="openChat(this.dataset.gid,this.dataset.gname)" style="flex:1;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">';
+  html+='<input type="button" value="🚪 Leave" data-gid="'+gid+'" onclick="leaveGroup(this.dataset.gid)" style="flex:1;background:var(--orange);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">';
+  if(isAdmin) html+='<input type="button" value="🗑️ Delete" data-gid="'+gid+'" onclick="deleteGroup(this.dataset.gid)" style="flex:1;background:var(--red);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">';
+  html+='</div>';
+  document.getElementById('members-content').innerHTML=html;
+}
+
+function leaveGroup(gid){
+  var g=myGroups.find(function(x){return x.id===gid;});
+  if(!confirm('Leave "'+( g?g.name:'group')+'"?')) return;
+  fetch(DBURL+'/groups/'+gid+'.json').then(function(r){return r.json();}).then(function(data){
+    var members=(data.members||[]).filter(function(u){return u!==me.uid;});
+    return fetch(DBURL+'/groups/'+gid+'/members.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(members)});
+  }).then(function(){toast('Left group');goBack();loadGroups();}).catch(function(e){toast('Error: '+e.message);});
+}
+
+function deleteGroup(gid){
+  var g=myGroups.find(function(x){return x.id===gid;});
+  if(!confirm('DELETE "'+( g?g.name:'group')+'"? Cannot be undone!')) return;
+  Promise.all([
+    fetch(DBURL+'/groups/'+gid+'.json',{method:'DELETE'}),
+    fetch(DBURL+'/messages/'+gid+'.json',{method:'DELETE'})
+  ]).then(function(){toast('Group deleted');goBack();loadGroups();}).catch(function(e){toast('Error: '+e.message);});
+}
+
+// ── MAP ─────────────────────────────────────────────────
+function refreshLocs(){
+  var allMembers=[];
+  myGroups.forEach(function(g){(g.members||[]).forEach(function(uid){if(allMembers.indexOf(uid)<0) allMembers.push(uid);});});
+  if(!allMembers.length){document.getElementById('map-content').innerHTML='<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-title">No groups yet</div><div class="empty-sub">Join or create a group to see member locations</div></div>';return;}
+  var proms=allMembers.map(function(uid){
+    return fetch(DBURL+'/locations/'+uid+'.json').then(function(r){return r.json();}).then(function(d){if(d&&d.lat) memberLocs[uid]=Object.assign(memberLocs[uid]||{},d);}).catch(function(){});
+  });
+  Promise.all(proms).then(function(){
+    var html=allMembers.map(function(uid){
+      var loc=memberLocs[uid]||{};
+      var name=loc.displayName||(uid===me.uid?me.displayName:'Member');
+      var color=COLORS[name.charCodeAt(0)%COLORS.length];
+      if(!loc.lat) return '<div class="loc-card"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">'+name.charAt(0).toUpperCase()+'</div><div><div class="loc-name">'+name+(uid===me.uid?' (You)':'')+'</div><div class="loc-coords">No location yet</div></div></div></div>';
+      return '<div class="loc-card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">'+name.charAt(0).toUpperCase()+'</div><div><div class="loc-name">'+name+(uid===me.uid?' (You)':'')+'</div><div class="loc-coords">Updated '+timeAgo(loc.timestamp)+'</div></div></div>'
+        +'<div class="loc-coords" style="margin-bottom:8px">📍 '+loc.lat.toFixed(5)+', '+loc.lng.toFixed(5)+'</div>'
+        +'<a href="https://maps.google.com/?q='+loc.lat+','+loc.lng+'" target="_blank" style="display:block;text-align:center;background:var(--blue);color:#fff;padding:10px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">🗺️ Open in Google Maps</a></div>';
+    }).join('');
+    document.getElementById('map-content').innerHTML=html;
+    toast('✅ Locations refreshed');
   });
 }
 
-function renderMemberList(g,gid){
-    var memberList=g.members.map(function(uid){
-      var isMe=uid===me.uid;
-      var loc=memberLocs[uid];
-      var name=(loc&&loc.displayName)?loc.displayName:(isMe?(me.displayName||me.email):'Member '+uid.substr(0,6));
-      var initial=(name||'?').charAt(0).toUpperCase();
-      var locStr=loc&&loc.lat?'📍 '+loc.lat.toFixed(4)+', '+loc.lng.toFixed(4)+' • '+timeAgo(loc.timestamp):'📍 Location not shared yet';
-      return '<div style="padding:12px 0;border-bottom:1px solid #eee;display:flex;align-items:flex-start;gap:10px">'
-        +'<div style="width:40px;height:40px;border-radius:50%;background:'+(isMe?'#1976D2':'#43A047')+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0">'+initial+'</div>'
-        +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+name+(isMe?' (You)':'')+'</div>'
-        +'<div style="font-size:12px;color:#666;margin-top:3px">'+locStr+'</div>'
-        +(loc&&loc.lat?'<a href="https://maps.google.com/?q='+loc.lat+','+loc.lng+'" target="_blank" style="display:inline-block;margin-top:5px;font-size:12px;color:#1976D2;font-weight:600;text-decoration:none">🗺️ Open in Google Maps</a>':'')
-        +'</div></div>';
-    }).join('');
-    var isAdmin=!g.admins||(g.admins&&g.admins.indexOf(me.uid)>=0);
-    document.getElementById('msgs').innerHTML='<div style="padding:14px">'
-      +'<div style="background:#e3f2fd;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">'
-      +'<div><div style="font-size:11px;color:#666;font-weight:700">INVITE CODE</div>'
-      +'<div style="font-size:22px;font-weight:800;color:#1976D2;letter-spacing:4px">'+g.inviteCode+'</div></div>'
-      +'<input type="button" value="📋 Copy" data-code="'+g.inviteCode+'" onclick="copyCode(this)" style="background:#1976D2;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
-      +'</div>'
-      +'<div style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;margin-bottom:10px">'+g.members.length+' Members</div>'
-      +memberList
-      +'<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">'
-      +'<input type="button" value="💬 Chat" data-gid="'+gid+'" data-gname="'+g.name+'" onclick="openChat(this.dataset.gid,this.dataset.gname)" style="flex:1;background:#1976D2;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
-      +'<input type="button" value="🚪 Leave" data-gid="'+gid+'" onclick="leaveGroup(this.dataset.gid)" style="flex:1;background:#ff5722;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
-      +(isAdmin?'<input type="button" value="🗑️ Delete" data-gid="'+gid+'" onclick="deleteGroup(this.dataset.gid)" style="flex:1;background:#d32f2f;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">':'')
-      +'</div></div>';
+// ── SOS ─────────────────────────────────────────────────
+var sosHoldTimer=null;
+function startSos(){
+  if(sosActive) return;
+  document.getElementById('sos-status').textContent='Keep holding... (3 seconds)';
+  sosHoldTimer=setTimeout(function(){triggerSos();},3000);
+}
+function cancelSosHold(){
+  if(sosActive) return;
+  clearTimeout(sosHoldTimer);
+  document.getElementById('sos-status').textContent='Hold the SOS button for 3 seconds to alert all group members with your location';
+}
+function triggerSos(){
+  sosActive=true;
+  if(navigator.vibrate) navigator.vibrate([200,100,200,100,200]);
+  document.getElementById('sos-btn').classList.add('active');
+  document.getElementById('sos-btn').innerHTML='🆘<span class="sos-label">ACTIVE</span>';
+  document.getElementById('sos-status').textContent='🔴 SOS active! Alerting all group members...';
+  document.getElementById('sos-bar').classList.add('on');
+  var loc=memberLocs[me.uid];
+  var mapsLink=loc?'https://maps.google.com/?q='+loc.lat+','+loc.lng:'(location not available)';
+  myGroups.forEach(function(g){
+    var msg={senderId:me.uid,senderName:me.displayName,content:'🆘 SOS ALERT! '+me.displayName+' needs help! Location: '+mapsLink,type:'sos',lat:loc?loc.lat:null,lng:loc?loc.lng:null,timestamp:Date.now()};
+    fetch(DBURL+'/messages/'+g.id+'/sos'+Date.now()+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)}).catch(function(){});
+    fetch(DBURL+'/groups/'+g.id+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({lastMessage:'🆘 SOS ALERT!',lastMessageTime:Date.now()})}).catch(function(){});
+  });
+  // Save SOS to RTDB for real-time alert
+  if(loc) fetch(DBURL+'/sos/'+me.uid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:me.uid,displayName:me.displayName,lat:loc.lat,lng:loc.lng,timestamp:Date.now(),active:true})}).catch(function(){});
+  toast('🆘 SOS sent to '+myGroups.length+' group(s)!',5000);
+}
+function cancelSos(){
+  if(!confirm('Cancel SOS alert?')) return;
+  sosActive=false;
+  document.getElementById('sos-btn').classList.remove('active');
+  document.getElementById('sos-btn').innerHTML='SOS<span class="sos-label">HOLD 3s</span>';
+  document.getElementById('sos-status').textContent='Hold the SOS button for 3 seconds to alert all group members with your location';
+  document.getElementById('sos-bar').classList.remove('on');
+  if(me) fetch(DBURL+'/sos/'+me.uid+'/active.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(false)}).catch(function(){});
+  myGroups.forEach(function(g){
+    var msg={senderId:me.uid,senderName:me.displayName,content:'✅ '+me.displayName+' is safe. SOS cancelled.',type:'system',timestamp:Date.now()};
+    fetch(DBURL+'/messages/'+g.id+'/sos_end'+Date.now()+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)}).catch(function(){});
+  });
+  toast('✅ SOS cancelled - all clear sent');
 }
 
+// ── SOS CONTACTS ─────────────────────────────────────────
+function renderSosContacts(){
+  var el=document.getElementById('sos-contacts');
+  if(!contacts.length){el.innerHTML='<div style="color:#999;font-size:13px;text-align:center;padding:12px">No emergency contacts added yet</div>';return;}
+  el.innerHTML=contacts.map(function(c,i){
+    return '<div style="background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 6px #00000008">'
+      +'<div style="width:42px;height:42px;border-radius:50%;background:#FF9800;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">'+c.icon+'</div>'
+      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.name+'</div><div style="font-size:12px;color:#666">'+c.phone+'</div></div>'
+      +'<a href="tel:'+c.phone+'" style="background:#e8f5e9;color:#43A047;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-decoration:none">📞 Call</a>'
+      +'</div>';
+  }).join('');
+}
+function addContact(){
+  var name=prompt('Contact name (e.g. Mom):');if(!name) return;
+  var phone=prompt('Phone number:');if(!phone) return;
+  contacts.push({name:name,phone:phone,icon:'👤'});
+  localStorage.setItem('sos_contacts',JSON.stringify(contacts));
+  renderSosContacts();
+  toast('✅ '+name+' added');
+}
 
+// ── UTILS ─────────────────────────────────────────────────
+function timeAgo(ts){
+  if(!ts) return 'unknown';
+  var d=Date.now()-ts;
+  if(d<60000) return 'just now';
+  if(d<3600000) return Math.floor(d/60000)+'m ago';
+  if(d<86400000) return Math.floor(d/3600000)+'h ago';
+  return Math.floor(d/86400000)+'d ago';
+}
 
+function toast(msg,dur){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(function(){t.classList.remove('show');},dur||3000);
+}
+
+// Auto-resize chat input
+document.getElementById('chat-input').addEventListener('input',function(){
+  this.style.height='auto';
+  this.style.height=Math.min(this.scrollHeight,100)+'px';
+});
+
+// ── INIT ──────────────────────────────────────────────────
+var saved=localStorage.getItem('ls_me');
+if(saved){
+  try{
+    me=JSON.parse(saved);
+    document.getElementById('pg-login').classList.remove('on');
+    document.getElementById('pg-app').classList.add('on');
+    document.getElementById('p-name').textContent=me.displayName;
+    document.getElementById('p-email').textContent=me.email;
+    document.getElementById('p-avatar').textContent=me.displayName.charAt(0).toUpperCase();
+    loadGroups();
+    requestLocation();
+    renderSosContacts();
+  }catch(e){localStorage.removeItem('ls_me');}
+}
 </script>
-
 </body>
 </html>
