@@ -255,37 +255,30 @@ function showsc(name,btn){
 // GROUPS via Firestore REST
 function loadGroups(){
   if(!me) return;
-  // Query groups where members array contains current user
-  fetch(FSURL+':runQuery?key='+APIKEY, {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+me.idToken},
-    body:JSON.stringify({
-      structuredQuery:{
-        from:[{collectionId:'groups'}],
-        where:{fieldFilter:{field:{fieldPath:'members'},op:'ARRAY_CONTAINS',value:{stringValue:me.uid}}},
-        orderBy:[{field:{fieldPath:'lastMessageTime'},direction:'DESCENDING'}]
-      }
-    })
+  fetch(DBURL+'/groups.json?auth='+me.idToken,{
+    headers:{'Content-Type':'application/json'}
   })
   .then(function(r){return r.json();})
-  .then(function(docs){
+  .then(function(data){
     myGroups=[];
-    if(Array.isArray(docs)){
-      docs.forEach(function(d){
-        if(!d.document) return;
-        var f=d.document.fields||{};
-        var id=d.document.name.split('/').pop();
+    if(data&&!data.error){
+      Object.keys(data).forEach(function(gid){
+        var g=data[gid];
+        if(!g) return;
+        var members=g.members||[];
+        if(members.indexOf(me.uid)<0) return; // not a member
         myGroups.push({
-          id:id,
-          name:(f.name&&f.name.stringValue)||'Group',
-          lastMessage:(f.lastMessage&&f.lastMessage.stringValue)||'',
-          members:(f.members&&f.members.arrayValue&&f.members.arrayValue.values||[]).map(function(v){return v.stringValue;}),
-          inviteCode:(f.inviteCode&&f.inviteCode.stringValue)||''
+          id:gid,
+          name:g.name||'Group',
+          lastMessage:g.lastMessage||'',
+          members:members,
+          inviteCode:g.inviteCode||''
         });
       });
     }
+    myGroups.sort(function(a,b){return (b.lastMessageTime||0)-(a.lastMessageTime||0);});
     renderGroups();
-    setTimeout(loadGroups,15000); // refresh every 15s
+    setTimeout(loadGroups,15000);
   })
   .catch(function(e){
     console.log('loadGroups error',e);
@@ -307,24 +300,28 @@ function renderGroups(){
 function esc(s){return (s||'').replace(/'/g,"\\'").replace(/</g,'&lt;');}
 
 function newgroup(){
-  var name=prompt('Group name:');
+  var name=prompt('Group name (e.g. Family):');
   if(!name||!name.trim()) return;
   var code=Math.random().toString(36).substr(2,6).toUpperCase();
-  fetch(FSURL+'?documentId=grp_'+Date.now()+'&key='+APIKEY, {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+me.idToken},
-    body:JSON.stringify({fields:{
-      name:{stringValue:name.trim()},
-      createdBy:{stringValue:me.uid},
-      members:{arrayValue:{values:[{stringValue:me.uid}]}},
-      admins:{arrayValue:{values:[{stringValue:me.uid}]}},
-      inviteCode:{stringValue:code},
-      lastMessage:{stringValue:''},
-      lastMessageTime:{integerValue:Date.now()},
-      createdAt:{integerValue:Date.now()}
-    }})
+  var gid='grp_'+Date.now();
+  var group={
+    name:name.trim(),
+    createdBy:me.uid,
+    members:[me.uid],
+    admins:[me.uid],
+    inviteCode:code,
+    lastMessage:'',
+    lastMessageTime:Date.now(),
+    createdAt:Date.now()
+  };
+  fetch(DBURL+'/groups/'+gid+'.json?auth='+me.idToken,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(group)
   })
-  .then(function(){
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.error){alert('Error: '+d.error);return;}
     alert('✅ Group "'+name+'" created!\nInvite code: '+code+'\n\nShare this code with family!');
     loadGroups();
   })
@@ -332,30 +329,31 @@ function newgroup(){
 }
 
 function joingroup(){
-  var code=prompt('Enter invite code:');
+  var code=prompt('Enter 6-character invite code:');
   if(!code) return;
-  // Find group by invite code
-  fetch(FSURL+':runQuery?key='+APIKEY,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+me.idToken},
-    body:JSON.stringify({structuredQuery:{from:[{collectionId:'groups'}],where:{fieldFilter:{field:{fieldPath:'inviteCode'},op:'EQUAL',value:{stringValue:code.toUpperCase()}}}}})
+  code=code.trim().toUpperCase();
+  // Search all groups for matching code
+  fetch(DBURL+'/groups.json?auth='+me.idToken+'&orderBy="inviteCode"&equalTo="'+code+'"',{
+    headers:{'Content-Type':'application/json'}
   })
   .then(function(r){return r.json();})
-  .then(function(docs){
-    if(!docs||!docs[0]||!docs[0].document){alert('No group found with code: '+code);return;}
-    var docName=docs[0].document.name;
-    var f=docs[0].document.fields||{};
-    var members=(f.members&&f.members.arrayValue&&f.members.arrayValue.values||[]).map(function(v){return v.stringValue;});
+  .then(function(data){
+    if(!data||data.error){alert('No group found with code: '+code);return;}
+    var gid=Object.keys(data)[0];
+    if(!gid){alert('No group found with code: '+code);return;}
+    var g=data[gid];
+    var members=g.members||[];
     if(members.indexOf(me.uid)>=0){alert('You are already in this group!');return;}
     members.push(me.uid);
-    fetch(docName+'?updateMask.fieldPaths=members&key='+APIKEY,{
-      method:'PATCH',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+me.idToken},
-      body:JSON.stringify({fields:{members:{arrayValue:{values:members.map(function(u){return {stringValue:u};})}}}})
+    fetch(DBURL+'/groups/'+gid+'/members.json?auth='+me.idToken,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(members)
     })
-    .then(function(){alert('✅ Joined group!');loadGroups();})
+    .then(function(){alert('✅ Joined "'+g.name+'"!');loadGroups();})
     .catch(function(e){alert('Error: '+e.message);});
-  });
+  })
+  .catch(function(e){alert('Network error: '+e.message);});
 }
 
 // CHAT
@@ -369,56 +367,49 @@ function openChat(gid,gname){
 
 function loadMsgs(){
   if(!curGid||!me) return;
-  fetch(FSURL+'/groups/'+curGid+'/messages?orderBy=timestamp&key='+APIKEY,{
-    headers:{'Authorization':'Bearer '+me.idToken}
+  fetch(DBURL+'/messages/'+curGid+'.json?auth='+me.idToken+'&orderBy=%22timestamp%22',{
+    headers:{'Content-Type':'application/json'}
   })
   .then(function(r){return r.json();})
   .then(function(data){
-    var docs=(data.documents||[]);
     var box=document.getElementById('msgs');
-    if(!docs.length){box.innerHTML='<p style="text-align:center;color:#999;padding:20px;font-size:13px">No messages yet!</p>';return;}
-    box.innerHTML=docs.map(function(d){
-      var f=d.fields||{};
-      var mine=(f.senderId&&f.senderId.stringValue)===me.uid;
-      var content=(f.content&&f.content.stringValue)||'';
-      var sname=(f.senderName&&f.senderName.stringValue)||'';
-      var ts=parseInt((f.timestamp&&f.timestamp.integerValue)||0);
-      var time=ts?new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
+    if(!data||data.error){box.innerHTML='<p style="text-align:center;color:#999;padding:20px;font-size:13px">No messages yet! Say hello 👋</p>';return;}
+    var msgs=Object.keys(data).map(function(k){return data[k];});
+    msgs.sort(function(a,b){return (a.timestamp||0)-(b.timestamp||0);});
+    if(!msgs.length){box.innerHTML='<p style="text-align:center;color:#999;padding:20px;font-size:13px">No messages yet!</p>';return;}
+    box.innerHTML=msgs.map(function(m){
+      var mine=m.senderId===me.uid;
+      var time=m.timestamp?new Date(m.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
       return '<div class="mw '+(mine?'me':'you')+'">'
-        +(!mine?'<div class="mn">'+sname+'</div>':'')
-        +'<div class="mb '+(mine?'me':'you')+'">'+content+'<div class="mt">'+time+'</div></div>'
+        +(!mine?'<div class="mn">'+(m.senderName||'')+'</div>':'')
+        +'<div class="mb '+(mine?'me':'you')+'">'+m.content+'<div class="mt">'+time+'</div></div>'
         +'</div>';
     }).join('');
     box.scrollTop=box.scrollHeight;
-    // Poll every 5s
     if(msgTimer) clearTimeout(msgTimer);
     msgTimer=setTimeout(loadMsgs,5000);
   })
   .catch(function(e){console.log('msgs error',e);if(msgTimer)clearTimeout(msgTimer);msgTimer=setTimeout(loadMsgs,10000);});
 }
 
+function SKIP_
 function sendmsg(){
   var txt=document.getElementById('cinput').value.trim();
-  if(!txt||!curGid) return;
+  if(!txt||!curGid||!me) return;
   document.getElementById('cinput').value='';
-  var msg={fields:{
-    senderId:{stringValue:me.uid},
-    senderName:{stringValue:me.displayName||me.email},
-    content:{stringValue:txt},
-    timestamp:{integerValue:Date.now()}
-  }};
-  fetch(FSURL+'/groups/'+curGid+'/messages?key='+APIKEY,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+me.idToken},
-    body:JSON.stringify(msg)
-  }).then(function(){loadMsgs();});
-  // Update last message
-  fetch(FSURL+'/groups/'+curGid+'?updateMask.fieldPaths=lastMessage&updateMask.fieldPaths=lastMessageTime&key='+APIKEY,{
+  var msgid='msg_'+Date.now();
+  fetch(DBURL+'/messages/'+curGid+'/'+msgid+'.json?auth='+me.idToken,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({senderId:me.uid,senderName:me.displayName||me.email,content:txt,timestamp:Date.now()})
+  }).then(function(){loadMsgs();}).catch(function(){});
+  fetch(DBURL+'/groups/'+curGid+'.json?auth='+me.idToken,{
     method:'PATCH',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+me.idToken},
-    body:JSON.stringify({fields:{lastMessage:{stringValue:txt},lastMessageTime:{integerValue:Date.now()}}})
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({lastMessage:txt,lastMessageTime:Date.now()})
   }).catch(function(){});
 }
+
 
 // LOCATION
 function startLocation(){
