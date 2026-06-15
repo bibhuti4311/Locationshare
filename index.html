@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -201,6 +202,11 @@ function enterApp(){
   document.getElementById('pname').textContent=me.displayName||me.email;
   document.getElementById('pemail').textContent=me.email;
   document.getElementById('pavatar').textContent=(me.displayName||'U').charAt(0).toUpperCase();
+  // Save user profile so others can see name
+  fetch(DBURL+'/users/'+me.uid+'.json',{
+    method:'PUT',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({uid:me.uid,displayName:me.displayName||me.email,email:me.email})
+  }).catch(function(){});
   loadGroups();
   startLocation();
 }
@@ -222,11 +228,11 @@ function copyCode(el){
 function leaveGroup(gid){
   var g=myGroups.find(function(x){return x.id===gid;});
   if(!confirm('Leave "'+( g?g.name:'group')+'"? You will need the invite code to rejoin.')) return;
-  fetch(DBURL+'/groups/'+gid+'.json?auth='+me.idToken)
+  fetch(DBURL+'/groups/'+gid+'.json')
     .then(function(r){return r.json();})
     .then(function(data){
       var members=(data.members||[]).filter(function(uid){return uid!==me.uid;});
-      return fetch(DBURL+'/groups/'+gid+'/members.json?auth='+me.idToken,{
+      return fetch(DBURL+'/groups/'+gid+'/members.json',{
         method:'PUT',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(members)
@@ -244,9 +250,9 @@ function deleteGroup(gid){
   var g=myGroups.find(function(x){return x.id===gid;});
   if(!confirm('DELETE "'+( g?g.name:'group')+'"? This cannot be undone. All messages will be lost.')) return;
   // Delete group and its messages
-  fetch(DBURL+'/groups/'+gid+'.json?auth='+me.idToken,{method:'DELETE'})
+  fetch(DBURL+'/groups/'+gid+'.json',{method:'DELETE'})
     .then(function(){
-      return fetch(DBURL+'/messages/'+gid+'.json?auth='+me.idToken,{method:'DELETE'});
+      return fetch(DBURL+'/messages/'+gid+'.json',{method:'DELETE'});
     })
     .then(function(){
       alert('Group deleted.');
@@ -315,7 +321,7 @@ function showsc(name,btn){
 // GROUPS via Firestore REST
 function loadGroups(){
   if(!me) return;
-  fetch(DBURL+'/groups.json?auth='+me.idToken,{
+  fetch(DBURL+'/groups.json',{
     headers:{'Content-Type':'application/json'}
   })
   .then(function(r){return r.json();})
@@ -392,7 +398,7 @@ function newgroup(){
     lastMessageTime:Date.now(),
     createdAt:Date.now()
   };
-  fetch(DBURL+'/groups/'+gid+'.json?auth='+me.idToken,{
+  fetch(DBURL+'/groups/'+gid+'.json',{
     method:'PUT',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(group)
@@ -411,7 +417,7 @@ function joingroup(){
   if(!code) return;
   code=code.trim().toUpperCase();
   // Fetch ALL groups and find matching code
-  fetch(DBURL+'/groups.json?auth='+me.idToken,{
+  fetch(DBURL+'/groups.json',{
     headers:{'Content-Type':'application/json'}
   })
   .then(function(r){return r.json();})
@@ -427,7 +433,7 @@ function joingroup(){
     var members=found.members||[];
     if(members.indexOf(me.uid)>=0){alert('You are already in "'+found.name+'"!');return;}
     members.push(me.uid);
-    fetch(DBURL+'/groups/'+foundId+'/members.json?auth='+me.idToken,{
+    fetch(DBURL+'/groups/'+foundId+'/members.json',{
       method:'PUT',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(members)
@@ -449,7 +455,7 @@ function openChat(gid,gname){
 
 function loadMsgs(){
   if(!curGid||!me) return;
-  fetch(DBURL+'/messages/'+curGid+'.json?auth='+me.idToken+'&orderBy=%22timestamp%22',{
+  fetch(DBURL+'/messages/'+curGid+'.json?orderBy=%22timestamp%22',{
     headers:{'Content-Type':'application/json'}
   })
   .then(function(r){return r.json();})
@@ -479,12 +485,12 @@ function sendmsg(){
   if(!txt||!curGid||!me) return;
   document.getElementById('cinput').value='';
   var msgid='msg_'+Date.now();
-  fetch(DBURL+'/messages/'+curGid+'/'+msgid+'.json?auth='+me.idToken,{
+  fetch(DBURL+'/messages/'+curGid+'/'+msgid+'.json',{
     method:'PUT',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({senderId:me.uid,senderName:me.displayName||me.email,content:txt,timestamp:Date.now()})
   }).then(function(){loadMsgs();}).catch(function(){});
-  fetch(DBURL+'/groups/'+curGid+'.json?auth='+me.idToken,{
+  fetch(DBURL+'/groups/'+curGid+'.json',{
     method:'PATCH',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({lastMessage:txt,lastMessageTime:Date.now()})
@@ -506,7 +512,7 @@ function refreshAllLocs(){
   }
   document.getElementById('maplocs').innerHTML='<p style="color:#999;text-align:center;padding:20px">Loading locations...</p>';
   var promises=allMembers.map(function(uid){
-    return fetch(DBURL+'/locations/'+uid+'.json?auth='+me.idToken)
+    return fetch(DBURL+'/locations/'+uid+'.json')
       .then(function(r){return r.json();})
       .then(function(d){ if(d&&!d.error) memberLocs[uid]=d; })
       .catch(function(){});
@@ -539,7 +545,7 @@ function startLocation(){
     var locData={uid:me.uid,displayName:me.displayName||me.email,lat:lat,lng:lng,timestamp:Date.now(),sharing:true};
     memberLocs[me.uid]=locData;
     // Store in RTDB
-    fetch(DBURL+'/locations/'+me.uid+'.json?auth='+me.idToken,{
+    fetch(DBURL+'/locations/'+me.uid+'.json',{
       method:'PUT',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(locData)
@@ -557,7 +563,7 @@ function loadMemberLocations(){
   myGroups.forEach(function(g){ g.members.forEach(function(uid){ if(allMembers.indexOf(uid)<0) allMembers.push(uid); }); });
   allMembers.forEach(function(uid){
     if(uid===me.uid) return;
-    fetch(DBURL+'/locations/'+uid+'.json?auth='+me.idToken)
+    fetch(DBURL+'/locations/'+uid+'.json')
       .then(function(r){return r.json();})
       .then(function(d){ if(d&&!d.error) memberLocs[uid]=d; })
       .catch(function(){});
@@ -573,10 +579,19 @@ function showGroupInfo(gid){
   if(msgTimer) clearTimeout(msgTimer);
   document.getElementById('msgs').innerHTML='<p style="text-align:center;color:#999;padding:20px">Loading member locations...</p>';
   var promises=g.members.map(function(uid){
-    return fetch(DBURL+'/locations/'+uid+'.json?auth='+me.idToken)
+    var p1=fetch(DBURL+'/locations/'+uid+'.json')
       .then(function(r){return r.json();})
-      .then(function(d){ if(d&&!d.error) memberLocs[uid]=d; })
+      .then(function(d){ if(d&&!d.error&&d.lat) memberLocs[uid]=d; })
       .catch(function(){});
+    var p2=fetch(DBURL+'/users/'+uid+'.json')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d&&d.displayName){
+          if(!memberLocs[uid]) memberLocs[uid]={};
+          memberLocs[uid].displayName=d.displayName;
+        }
+      }).catch(function(){});
+    return Promise.all([p1,p2]);
   });
   Promise.all(promises).then(function(){
     var memberList=g.members.map(function(uid){
