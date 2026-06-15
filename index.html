@@ -392,7 +392,6 @@ function loadMsgs(){
   .catch(function(e){console.log('msgs error',e);if(msgTimer)clearTimeout(msgTimer);msgTimer=setTimeout(loadMsgs,10000);});
 }
 
-function SKIP_
 function sendmsg(){
   var txt=document.getElementById('cinput').value.trim();
   if(!txt||!curGid||!me) return;
