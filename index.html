@@ -5,312 +5,297 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1565C0">
+<link rel="manifest" href="manifest.json">
 <title>LocationShare</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--blue:#1976D2;--dark:#0D47A1;--green:#43A047;--red:#E53935;--orange:#FF5722;--bg:#F0F2F5;--card:#fff;--text:#1a1a1a;--gray:#666;--border:#E0E0E0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100dvh;overflow:hidden;max-width:480px;margin:0 auto}
-/* PAGES */
+:root{--blue:#1976D2;--dark:#0D47A1;--green:#43A047;--red:#E53935;--orange:#FF5722;--yellow:#FFC107;--bg:#F0F2F5;--card:#fff;--text:#1a1a1a;--gray:#666;--border:#E0E0E0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100dvh;overflow:hidden;max-width:480px;margin:0 auto;position:relative}
 .page{position:fixed;inset:0;max-width:480px;margin:0 auto;display:none;flex-direction:column;background:var(--bg)}
 .page.on{display:flex}
 /* LOGIN */
-#pg-login{background:linear-gradient(160deg,#0D47A1 0%,#1976D2 50%,#1E88E5 100%);align-items:center;justify-content:center;padding:24px}
+#pg-login{background:linear-gradient(160deg,#0D47A1,#1976D2,#1E88E5);align-items:center;justify-content:center;padding:24px;overflow-y:auto}
 .login-logo{font-size:56px;margin-bottom:8px;text-align:center}
 .login-title{color:#fff;font-size:28px;font-weight:800;text-align:center;margin-bottom:4px}
-.login-sub{color:#ffffff99;font-size:14px;text-align:center;margin-bottom:28px}
+.login-sub{color:#ffffff99;font-size:14px;text-align:center;margin-bottom:24px}
 .login-card{background:#fff;border-radius:24px;padding:28px 24px;width:100%;max-width:360px;box-shadow:0 20px 60px #00000030}
-.login-card h2{font-size:20px;font-weight:700;margin-bottom:20px;text-align:center;color:var(--text)}
+.login-card h2{font-size:20px;font-weight:700;margin-bottom:20px;text-align:center}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.field input{width:100%;padding:13px 16px;font-size:15px;border:1.5px solid var(--border);border-radius:12px;outline:none;background:#fff;color:var(--text);transition:.2s}
+.field input{width:100%;padding:13px 16px;font-size:15px;border:1.5px solid var(--border);border-radius:12px;outline:none;background:#fff;-webkit-appearance:none}
 .field input:focus{border-color:var(--blue)}
 .err-box{background:#ffebee;color:#c62828;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;display:none}
-.btn{width:100%;padding:15px;font-size:16px;font-weight:700;border:none;border-radius:12px;cursor:pointer;-webkit-appearance:none;transition:.15s}
-.btn:active{opacity:.85;transform:scale(.98)}
-.btn-blue{background:var(--blue);color:#fff;margin-top:4px}
+.btn{width:100%;padding:15px;font-size:16px;font-weight:700;border:none;border-radius:12px;cursor:pointer;-webkit-appearance:none;display:block}
+.btn:active{opacity:.85}
+.btn-blue{background:var(--blue);color:#fff;margin-top:8px}
 .btn-ghost{background:#F0F4FF;color:var(--blue);margin-top:10px}
-/* APP HEADER */
+.btn-red{background:var(--red);color:#fff;margin-top:8px}
+.btn-orange{background:var(--orange);color:#fff;margin-top:8px}
+.btn-green{background:var(--green);color:#fff;margin-top:8px}
+.btn-sm{padding:10px 16px;font-size:13px;border-radius:10px;border:none;cursor:pointer;-webkit-appearance:none;font-weight:700}
+/* APP */
 .app-header{background:var(--blue);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:0 2px 8px #00000020}
 .app-header h1{flex:1;font-size:17px;font-weight:700}
-.header-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px;line-height:1}
-/* BOTTOM NAV */
+.hdr-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px;line-height:1;-webkit-appearance:none}
+/* NAV */
 .bottom-nav{background:#fff;border-top:1px solid var(--border);display:flex;flex-shrink:0;box-shadow:0 -2px 10px #00000010}
-.nav-item{flex:1;padding:10px 4px 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#999;font-size:10px;font-weight:600;transition:.15s;-webkit-appearance:none}
+.nav-item{flex:1;padding:10px 4px 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:#999;font-size:10px;font-weight:600;-webkit-appearance:none;position:relative}
 .nav-item.on{color:var(--blue)}
-.nav-icon{font-size:22px;line-height:1}
+.nav-item.sos-nav{color:var(--red)}
+.nav-dot{width:7px;height:7px;background:var(--red);border-radius:50%;position:absolute;top:8px;right:calc(50% - 16px);display:none}
+.nav-dot.on{display:block;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 /* SCREENS */
 .screen{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .screen.on{display:block}
-/* GROUPS SCREEN */
-.screen-pad{padding:14px}
-.section-label{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding:0 4px}
-.group-card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:0 2px 8px #00000008;overflow:hidden}
+.sp{padding:14px}
+.sec-label{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+/* GROUPS */
+.group-card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:0 2px 8px #00000008}
 .group-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.group-avatar{width:50px;height:50px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0}
-.group-info{flex:1;min-width:0}
-.group-name{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.group-meta{font-size:12px;color:var(--gray);margin-top:3px}
-.code-badge{background:#EEF4FF;border-radius:10px;padding:6px 10px;text-align:center;flex-shrink:0}
-.code-text{font-size:15px;font-weight:800;color:var(--blue);letter-spacing:3px}
-.code-label{font-size:9px;color:var(--blue);font-weight:600;margin-top:1px}
-.group-actions{display:flex;gap:8px}
-.action-btn{flex:1;padding:10px;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none;transition:.15s}
-.action-btn:active{opacity:.8}
-.btn-chat{background:var(--blue);color:#fff}
-.btn-members{background:#EEF4FF;color:var(--blue)}
-/* FAB */
-.fab{position:fixed;bottom:74px;right:18px;width:56px;height:56px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:26px;box-shadow:0 4px 16px #1976D240;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:90;-webkit-appearance:none;transition:.15s}
+.g-avatar{width:50px;height:50px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0}
+.g-info{flex:1;min-width:0}
+.g-name{font-size:16px;font-weight:700}
+.g-meta{font-size:12px;color:var(--gray);margin-top:3px}
+.code-chip{background:#EEF4FF;border-radius:10px;padding:6px 10px;text-align:center;cursor:pointer;flex-shrink:0}
+.code-chip:active{background:#DDEEFF}
+.code-val{font-size:15px;font-weight:800;color:var(--blue);letter-spacing:3px}
+.code-lbl{font-size:9px;color:var(--blue);font-weight:600;margin-top:1px}
+.g-actions{display:flex;gap:8px}
+.g-btn{flex:1;padding:10px;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+.g-btn:active{opacity:.8}
+.fab{position:fixed;bottom:74px;right:18px;width:56px;height:56px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:28px;box-shadow:0 4px 16px #1976D240;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:90;-webkit-appearance:none}
 .fab:active{transform:scale(.92)}
 /* CHAT */
-#chat-screen{display:none;flex:1;flex-direction:column;overflow:hidden}
-#chat-screen.on{display:flex}
-#chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch;background:#ECE5DD}
-.msg-wrap{display:flex;flex-direction:column;max-width:78%}
-.msg-wrap.me{align-self:flex-end;align-items:flex-end}
-.msg-wrap.you{align-self:flex-start;align-items:flex-start}
-.msg-name{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:3px;padding:0 4px}
-.msg-bubble{padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.45;word-break:break-word;position:relative}
-.msg-bubble.me{background:#DCF8C6;border-radius:18px 4px 18px 18px}
-.msg-bubble.you{background:#fff;border-radius:4px 18px 18px 18px;box-shadow:0 1px 3px #00000010}
-.msg-time{font-size:10px;color:#999;margin-top:3px;padding:0 4px}
-.msg-system{align-self:center;background:#00000015;color:#555;font-size:11px;padding:4px 12px;border-radius:20px;margin:4px 0}
+#chat-wrap{display:none;flex:1;flex-direction:column;overflow:hidden;background:#ECE5DD}
+#chat-wrap.on{display:flex}
+#chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
+.mw{display:flex;flex-direction:column;max-width:78%}
+.mw.me{align-self:flex-end;align-items:flex-end}
+.mw.you{align-self:flex-start;align-items:flex-start}
+.mn{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:3px;padding:0 4px}
+.mb{padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.45;word-break:break-word}
+.mb.me{background:#DCF8C6;border-radius:18px 4px 18px 18px}
+.mb.you{background:#fff;border-radius:4px 18px 18px 18px;box-shadow:0 1px 3px #00000010}
+.mb.sos-msg{background:#ffebee;border:2px solid var(--red);border-radius:12px;padding:12px}
+.mt{font-size:10px;color:#999;margin-top:3px;padding:0 4px}
+.sys-msg{align-self:center;background:#00000015;color:#555;font-size:11px;padding:4px 12px;border-radius:20px;margin:4px 0}
 #chat-bar{background:#fff;padding:10px 12px;display:flex;align-items:flex-end;gap:8px;border-top:1px solid var(--border);flex-shrink:0}
-#chat-input{flex:1;padding:10px 16px;font-size:15px;border:1.5px solid var(--border);border-radius:24px;outline:none;max-height:100px;resize:none;font-family:inherit;line-height:1.4}
+#chat-input{flex:1;padding:10px 16px;font-size:15px;border:1.5px solid var(--border);border-radius:24px;outline:none;max-height:100px;resize:none;font-family:inherit;line-height:1.4;background:#fff;-webkit-appearance:none}
 #chat-input:focus{border-color:var(--blue)}
-.send-btn{width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none}
-.loc-btn{width:44px;height:44px;border-radius:50%;background:#EEF4FF;color:var(--blue);border:none;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none}
+.chat-btn{width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;-webkit-appearance:none}
+.chat-btn:active{opacity:.7}
 /* MEMBERS */
 .member-card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 2px 6px #00000008}
-.member-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;flex-shrink:0}
-.member-info{flex:1;min-width:0}
-.member-name{font-size:15px;font-weight:700}
-.member-loc{font-size:12px;color:var(--gray);margin-top:3px;line-height:1.4}
-.member-time{font-size:11px;color:#43A047;font-weight:600;margin-top:3px}
-.maps-link{display:inline-block;margin-top:6px;background:#EEF4FF;color:var(--blue);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none}
-/* MAP */
+.m-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;flex-shrink:0}
+/* STATUS COLORS */
+.status-safe{background:#E8F5E9;border-left:4px solid var(--green)}
+.status-outside{background:#FFF8E1;border-left:4px solid var(--yellow)}
+.status-unknown{background:#FAFAFA;border-left:4px solid #ccc}
+.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}
+.dot-green{background:var(--green)}
+.dot-yellow{background:var(--yellow)}
+.dot-gray{background:#999}
+.dot-red{background:var(--red)}
+/* MAP / LOC */
 .loc-card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 6px #00000008}
-.loc-name{font-size:15px;font-weight:700;margin-bottom:4px}
-.loc-coords{font-size:12px;color:var(--gray);margin-bottom:8px}
-/* PROFILE */
-.profile-hero{background:linear-gradient(135deg,#0D47A1,#1976D2);padding:32px 20px 24px;display:flex;flex-direction:column;align-items:center;color:#fff}
-.profile-avatar{width:72px;height:72px;border-radius:50%;background:#ffffff30;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;margin-bottom:10px;border:3px solid #ffffff50}
-.profile-name{font-size:20px;font-weight:700}
-.profile-email{font-size:13px;opacity:.7;margin-top:3px}
-.settings-group{background:var(--card);border-radius:16px;margin:12px 14px 0;overflow:hidden;box-shadow:0 2px 6px #00000008}
-.settings-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer}
-.settings-row:last-child{border-bottom:none}
-.settings-icon{font-size:20px;margin-right:12px;width:24px;text-align:center}
-.settings-text{flex:1}
-.settings-label{font-size:14px;font-weight:600}
-.settings-sub{font-size:12px;color:var(--gray);margin-top:1px}
-.settings-arrow{color:#ccc;font-size:18px}
 /* SOS */
-.sos-wrap{display:flex;flex-direction:column;align-items:center;padding:32px 20px}
-.sos-btn{width:160px;height:160px;border-radius:50%;background:linear-gradient(135deg,#E53935,#B71C1C);border:none;color:#fff;font-size:36px;font-weight:900;letter-spacing:2px;cursor:pointer;box-shadow:0 0 0 12px #ffcdd2,0 0 0 24px #ffebee,0 8px 40px #E5393560;-webkit-appearance:none;transition:.15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-.sos-btn:active{transform:scale(.95)}
-.sos-btn.active{animation:sosPulse 1.2s infinite}
-@keyframes sosPulse{0%,100%{box-shadow:0 0 0 12px #ffcdd2,0 0 0 24px #ffebee,0 8px 40px #E5393560}50%{box-shadow:0 0 0 18px #ef9a9a,0 0 0 36px #ffcdd2,0 8px 60px #E5393590}}
-.sos-label{font-size:11px;font-weight:600;opacity:.8;letter-spacing:1px}
-.sos-status{font-size:13px;color:var(--gray);margin-top:20px;text-align:center;max-width:260px;line-height:1.5}
-.sos-active-bar{background:#E53935;color:#fff;padding:10px 16px;display:none;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;flex-shrink:0}
+.sos-wrap{display:flex;flex-direction:column;align-items:center;padding:28px 20px;gap:0}
+.sos-ring{width:190px;height:190px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 12px #ffcdd2,0 0 0 24px #ffebee;margin-bottom:16px;cursor:pointer;-webkit-appearance:none;border:none;flex-shrink:0}
+.sos-ring.active{animation:sosPulse 1.2s infinite}
+@keyframes sosPulse{0%,100%{box-shadow:0 0 0 12px #ef9a9a,0 0 0 24px #ffcdd2}50%{box-shadow:0 0 0 20px #e57373,0 0 0 38px #ffcdd2}}
+.sos-inner{width:160px;height:160px;border-radius:50%;background:linear-gradient(135deg,#E53935,#B71C1C);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:38px;font-weight:900;letter-spacing:2px;gap:4px;pointer-events:none}
+.sos-sub{font-size:11px;font-weight:600;opacity:.8;letter-spacing:1px}
+.sos-status-txt{font-size:13px;color:var(--gray);text-align:center;max-width:260px;line-height:1.5;margin-bottom:16px}
+.sos-active-bar{background:var(--red);color:#fff;padding:10px 16px;display:none;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;flex-shrink:0}
 .sos-active-bar.on{display:flex}
-.sos-cancel{background:#fff;color:#E53935;border:none;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;cursor:pointer}
-/* INVITE BOX */
-.invite-box{background:#EEF4FF;border-radius:14px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
-.invite-code{font-size:26px;font-weight:800;color:var(--blue);letter-spacing:5px}
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 30px;color:var(--gray);text-align:center}
-.empty-icon{font-size:52px;margin-bottom:12px}
-.empty-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px}
-.empty-sub{font-size:14px;line-height:1.5}
+/* SAFE PLACES */
+.place-card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 2px 6px #00000008;display:flex;align-items:center;gap:12px}
+.place-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+/* PROFILE */
+.profile-hero{background:linear-gradient(135deg,#0D47A1,#1976D2);padding:28px 20px 24px;display:flex;flex-direction:column;align-items:center;color:#fff}
+.p-avatar{width:70px;height:70px;border-radius:50%;background:#ffffff30;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin-bottom:10px;border:3px solid #ffffff50}
+.settings-card{background:var(--card);border-radius:16px;margin:12px 14px 0;overflow:hidden;box-shadow:0 2px 6px #00000008}
+.s-row{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+.s-row:last-child{border-bottom:none}
+.s-row:active{background:#f5f5f5}
+.s-icon{font-size:20px;margin-right:12px;width:24px;text-align:center}
+.s-text{flex:1}
+.s-label{font-size:14px;font-weight:600}
+.s-sub{font-size:12px;color:var(--gray);margin-top:1px}
+/* REMINDER BANNER */
+#reminder-banner{background:#FF9800;color:#fff;padding:10px 16px;display:none;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;flex-shrink:0}
+#reminder-banner.on{display:flex}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:#00000066;z-index:500;display:none;align-items:flex-end;justify-content:center;max-width:480px;margin:0 auto}
+.modal-overlay.on{display:flex}
+.modal-box{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:16px}
 /* TOAST */
-#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#323232;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#323232;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:.3s;pointer-events:none;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-/* LOC PERMISSION BANNER */
-#loc-banner{background:#FF9800;color:#fff;padding:10px 16px;font-size:13px;font-weight:600;display:none;align-items:center;justify-content:space-between;flex-shrink:0}
-#loc-banner.on{display:flex}
-#loc-banner button{background:#fff;color:#E65100;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 30px;color:var(--gray);text-align:center}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
 </style>
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
+<!-- LOGIN -->
 <div class="page on" id="pg-login">
   <div class="login-logo">📡</div>
   <div class="login-title">LocationShare</div>
   <div class="login-sub">Stay connected with your family</div>
   <div class="login-card">
     <h2 id="l-title">Welcome Back 👋</h2>
-    <div class="field" id="l-name-field" style="display:none">
-      <label>Your Name</label>
-      <input type="text" id="l-name" placeholder="e.g. Bibhuti">
-    </div>
-    <div class="field">
-      <label>Email</label>
-      <input type="email" id="l-email" placeholder="you@gmail.com">
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="l-pass" placeholder="Min 6 characters">
-    </div>
+    <div class="field" id="l-name-f" style="display:none"><label>Your Name</label><input type="text" id="l-name" placeholder="e.g. Bibhuti"></div>
+    <div class="field"><label>Email</label><input type="email" id="l-email" placeholder="you@gmail.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="l-pass" placeholder="Min 6 characters"></div>
     <div class="err-box" id="l-err"></div>
     <input type="button" class="btn btn-blue" id="l-btn" value="Sign In">
     <input type="button" class="btn btn-ghost" id="l-tog" value="Don't have an account? Register">
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div class="page" id="pg-app">
-  <!-- SOS Active Bar -->
   <div class="sos-active-bar" id="sos-bar">
-    <span>🆘 SOS ACTIVE</span>
-    <button class="sos-cancel" onclick="cancelSos()">CANCEL</button>
+    <span>🆘 SOS ACTIVE — Broadcasting</span>
+    <button onclick="cancelSos()" style="background:#fff;color:var(--red);border:none;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;cursor:pointer">CANCEL</button>
   </div>
-  <!-- Location Banner -->
-  <div id="loc-banner">
-    <span>📍 Allow location to share with family</span>
-    <button onclick="requestLocation()">Allow</button>
+  <div id="reminder-banner">
+    <span id="reminder-txt">⚠️ Check-in reminder</span>
+    <button onclick="checkInSafe()" style="background:#fff;color:#E65100;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer">I'm Safe ✅</button>
   </div>
-  <!-- Header -->
   <div class="app-header">
+    <button class="hdr-btn" id="hdr-back" style="display:none" onclick="goBack()">←</button>
     <h1 id="app-title">📡 LocationShare</h1>
-    <button class="header-btn" id="hdr-back" style="display:none" onclick="goBack()">←</button>
-    <button class="header-btn" onclick="signout()">⎋</button>
+    <button class="hdr-btn" id="hdr-action" style="display:none" onclick="headerAction()">⋮</button>
   </div>
 
-  <!-- Groups Screen -->
+  <!-- Groups -->
   <div class="screen on" id="sc-groups">
-    <div class="screen-pad">
-      <div class="section-label">My Groups</div>
+    <div class="sp">
+      <div class="sec-label">My Groups</div>
       <div id="groups-list"></div>
     </div>
     <div style="height:80px"></div>
     <button class="fab" onclick="newgroup()">+</button>
   </div>
 
-  <!-- Chat Screen -->
-  <div id="chat-screen">
+  <!-- Chat -->
+  <div id="chat-wrap">
     <div id="chat-msgs"></div>
     <div id="chat-bar">
-      <button class="loc-btn" onclick="sendLocation()">📍</button>
+      <button class="chat-btn" style="background:#EEF4FF;color:var(--blue)" onclick="sendLocation()">📍</button>
       <textarea id="chat-input" rows="1" placeholder="Message..."></textarea>
-      <button class="send-btn" onclick="sendmsg()">➤</button>
+      <button class="chat-btn" style="background:var(--blue);color:#fff" onclick="sendmsg()">➤</button>
     </div>
   </div>
 
-  <!-- Members Screen -->
+  <!-- Members -->
   <div class="screen" id="sc-members">
-    <div class="screen-pad">
-      <div id="members-content"></div>
-    </div>
+    <div class="sp"><div id="members-content"></div></div>
     <div style="height:20px"></div>
   </div>
 
-  <!-- Map Screen -->
+  <!-- Map -->
   <div class="screen" id="sc-map">
-    <div class="screen-pad">
-      <div class="section-label">Live Locations</div>
+    <div class="sp">
+      <div class="sec-label">Live Locations</div>
       <div id="map-content"></div>
-      <input type="button" value="🔄 Refresh" onclick="refreshLocs()" style="width:100%;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-top:8px">
+      <input type="button" value="🔄 Refresh Locations" onclick="refreshLocs()" style="width:100%;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-top:4px">
     </div>
     <div style="height:20px"></div>
   </div>
 
-  <!-- SOS Screen -->
+  <!-- Safe Places -->
+  <div class="screen" id="sc-places">
+    <div class="sp">
+      <div class="sec-label">Safe Places</div>
+      <div id="places-list"></div>
+      <input type="button" value="+ Add Safe Place" onclick="addPlace()" style="width:100%;background:#E8F5E9;color:var(--green);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-top:4px">
+    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- SOS -->
   <div class="screen" id="sc-sos">
     <div class="sos-wrap">
-      <button class="sos-btn" id="sos-btn" onpointerdown="startSos()" onpointerup="cancelSosHold()" onpointerleave="cancelSosHold()">
-        SOS
-        <span class="sos-label">HOLD 3s</span>
-      </button>
-      <div class="sos-status" id="sos-status">Hold the SOS button for 3 seconds to alert all group members with your location</div>
-      <div style="margin-top:24px;width:100%">
-        <div class="section-label">Emergency Contacts</div>
+      <div class="sos-ring" id="sos-ring" onpointerdown="startSosHold()" onpointerup="stopSosHold()" onpointerleave="stopSosHold()" ontouchstart="event.preventDefault();startSosHold()" ontouchend="stopSosHold()">
+        <div class="sos-inner" id="sos-inner">SOS<span class="sos-sub">HOLD 3s</span></div>
+      </div>
+      <div class="sos-status-txt" id="sos-status">Hold the SOS button for 3 seconds to alert all group members with your live location</div>
+      <div style="width:100%">
+        <div class="sec-label">Emergency Contacts</div>
         <div id="sos-contacts"></div>
-        <input type="button" value="+ Add Contact" onclick="addContact()" style="width:100%;background:#FFF3E0;color:#E65100;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-top:8px">
+        <input type="button" value="+ Add Emergency Contact" onclick="addContact()" style="width:100%;background:#FFF3E0;color:#E65100;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-top:8px">
       </div>
     </div>
     <div style="height:20px"></div>
   </div>
 
-  <!-- Profile Screen -->
+  <!-- Profile -->
   <div class="screen" id="sc-profile">
     <div class="profile-hero">
-      <div class="profile-avatar" id="p-avatar">U</div>
-      <div class="profile-name" id="p-name">User</div>
-      <div class="profile-email" id="p-email"></div>
+      <div class="p-avatar" id="p-avatar">U</div>
+      <div style="font-size:20px;font-weight:700" id="p-name">User</div>
+      <div style="font-size:13px;opacity:.7;margin-top:3px" id="p-email"></div>
     </div>
-    <div class="settings-group">
-      <div class="settings-row" onclick="joingroup()">
-        <span class="settings-icon">🔑</span>
-        <div class="settings-text">
-          <div class="settings-label">Join Group by Code</div>
-          <div class="settings-sub">Enter invite code from family</div>
-        </div>
-        <span class="settings-arrow">›</span>
-      </div>
-      <div class="settings-row" onclick="requestLocation()">
-        <span class="settings-icon">📍</span>
-        <div class="settings-text">
-          <div class="settings-label">Enable Location</div>
-          <div class="settings-sub" id="loc-status-text">Tap to allow location access</div>
-        </div>
-        <span class="settings-arrow">›</span>
-      </div>
+    <div class="settings-card">
+      <div class="s-row" onclick="joingroup()"><span class="s-icon">🔑</span><div class="s-text"><div class="s-label">Join Group by Code</div><div class="s-sub">Enter invite code from family</div></div><span style="color:#ccc">›</span></div>
+      <div class="s-row" onclick="requestLocation()"><span class="s-icon">📍</span><div class="s-text"><div class="s-label">Location Permission</div><div class="s-sub" id="loc-status-sub">Tap to enable</div></div><span style="color:#ccc">›</span></div>
+      <div class="s-row" onclick="showSosSetup()"><span class="s-icon">🆘</span><div class="s-text"><div class="s-label">SOS & Safety Setup</div><div class="s-sub">Emergency contacts & check-in time</div></div><span style="color:#ccc">›</span></div>
     </div>
-    <div class="settings-group" style="margin-top:10px">
-      <div class="settings-row" onclick="signout()" style="color:#E53935">
-        <span class="settings-icon">🚪</span>
-        <div class="settings-text">
-          <div class="settings-label" style="color:#E53935">Sign Out</div>
-        </div>
-      </div>
+    <div class="settings-card" style="margin-top:10px">
+      <div class="s-row" onclick="signout()"><span class="s-icon">🚪</span><div class="s-text"><div class="s-label" style="color:var(--red)">Sign Out</div></div></div>
     </div>
     <div style="height:80px"></div>
   </div>
 
-  <!-- Bottom Nav -->
   <div class="bottom-nav">
-    <button class="nav-item on" onclick="showScreen('groups',this)">
-      <span class="nav-icon">👥</span>Groups
-    </button>
-    <button class="nav-item" onclick="showScreen('map',this)">
-      <span class="nav-icon">🗺️</span>Map
-    </button>
-    <button class="nav-item" onclick="showScreen('sos',this)" style="color:#E53935">
-      <span class="nav-icon">🆘</span>SOS
-    </button>
-    <button class="nav-item" onclick="showScreen('profile',this)">
-      <span class="nav-icon">👤</span>Profile
-    </button>
+    <button class="nav-item on" onclick="showScreen('groups',this)"><span style="font-size:22px">👥</span>Groups</button>
+    <button class="nav-item" onclick="showScreen('map',this)"><span style="font-size:22px">🗺️</span>Map</button>
+    <button class="nav-item" onclick="showScreen('places',this)"><span style="font-size:22px">🏠</span>Places</button>
+    <button class="nav-item sos-nav" onclick="showScreen('sos',this)"><span style="font-size:22px">🆘</span>SOS<div class="nav-dot" id="sos-nav-dot"></div></button>
+    <button class="nav-item" onclick="showScreen('profile',this)"><span style="font-size:22px">👤</span>Profile</button>
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
 var DBURL='https://locationshare-da6a6-default-rtdb.firebaseio.com';
 var APIKEY='AIzaSyDQUj7_pPJ5xanEFWfZbwwiDZt2gJY1E1E';
-var me=null,myGroups=[],memberLocs={},curGid=null,msgTimer=null,sosTimer=null,sosActive=false,locWatchId=null;
-var isReg=false,prevScreen='groups';
+var COLORS=['#E53935','#8E24AA','#1E88E5','#43A047','#FB8C00','#00ACC1','#6D4C41','#3949AB'];
+
+var me=null, myGroups=[], memberLocs={}, curGid=null, curGname='';
+var msgTimer=null, sosHoldTimer=null, sosActive=false, locWatchId=null;
+var isReg=false, prevScr='groups';
 var contacts=JSON.parse(localStorage.getItem('sos_contacts')||'[]');
+var safePlaces=JSON.parse(localStorage.getItem('safe_places')||'[]');
+var sosSettings=JSON.parse(localStorage.getItem('sos_settings')||'{"checkInTime":"22:00","reminderCount":0,"lastReminder":0,"checkedIn":false}');
+var reminderInterval=null;
 
-// ── AUTH ──────────────────────────────────────────────
+// ── LOGIN ──────────────────────────────────────────────────────────
 document.getElementById('l-btn').onclick=doAuth;
-document.getElementById('l-tog').onclick=toggleMode;
-document.getElementById('chat-input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendmsg();}});
-
-function toggleMode(){
+document.getElementById('l-tog').onclick=function(){
   isReg=!isReg;
   document.getElementById('l-title').textContent=isReg?'Create Account 🚀':'Welcome Back 👋';
   document.getElementById('l-btn').value=isReg?'Register':'Sign In';
   document.getElementById('l-tog').value=isReg?'Already registered? Sign In':"Don't have an account? Register";
-  document.getElementById('l-name-field').style.display=isReg?'block':'none';
+  document.getElementById('l-name-f').style.display=isReg?'block':'none';
   document.getElementById('l-err').style.display='none';
-}
+};
 
 function doAuth(){
   var em=document.getElementById('l-email').value.trim();
@@ -320,42 +305,37 @@ function doAuth(){
   err.style.display='none';
   if(!em||!pw){err.textContent='Enter email and password';err.style.display='block';return;}
   if(isReg&&!nm){err.textContent='Enter your name';err.style.display='block';return;}
-  document.getElementById('l-btn').value='Please wait...';
-  document.getElementById('l-btn').disabled=true;
+  var btn=document.getElementById('l-btn');
+  btn.value='Please wait...'; btn.disabled=true;
   var ep=isReg?'signUp':'signInWithPassword';
   fetch('https://identitytoolkit.googleapis.com/v1/accounts:'+ep+'?key='+APIKEY,{
     method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({email:em,password:pw,returnSecureToken:true})
-  }).then(function(r){return r.json();})
-  .then(function(d){
+  }).then(function(r){return r.json();}).then(function(d){
     if(d.error){
       var msg=d.error.message||'Failed';
       if(msg==='EMAIL_NOT_FOUND'||msg==='INVALID_LOGIN_CREDENTIALS') msg='Wrong email or password';
-      if(msg==='EMAIL_EXISTS') msg='Email already registered — Sign In instead';
-      if(msg.includes('WEAK_PASSWORD')) msg='Password too short (min 6 chars)';
-      err.textContent='❌ '+msg;err.style.display='block';
-      document.getElementById('l-btn').value=isReg?'Register':'Sign In';
-      document.getElementById('l-btn').disabled=false;
-      return;
+      if(msg==='EMAIL_EXISTS') msg='Email exists — Sign In instead';
+      if(msg.indexOf('WEAK_PASSWORD')>=0) msg='Password too short (min 6)';
+      err.textContent='❌ '+msg; err.style.display='block';
+      btn.value=isReg?'Register':'Sign In'; btn.disabled=false; return;
     }
-    me={uid:d.localId,email:d.email,displayName:d.displayName||nm||d.email,idToken:d.idToken};
+    me={uid:d.localId,email:d.email,displayName:d.displayName||nm||d.email};
     if(isReg&&nm) me.displayName=nm;
     localStorage.setItem('ls_me',JSON.stringify(me));
     saveProfile();
     enterApp();
-  }).catch(function(e){
-    err.textContent='❌ Network error';err.style.display='block';
-    document.getElementById('l-btn').value=isReg?'Register':'Sign In';
-    document.getElementById('l-btn').disabled=false;
+    if(isReg) setTimeout(function(){showSosSetup();},1000); // ask SOS setup on register
+  }).catch(function(){
+    err.textContent='❌ Network error'; err.style.display='block';
+    btn.value=isReg?'Register':'Sign In'; btn.disabled=false;
   });
 }
 
 function saveProfile(){
   if(!me) return;
-  fetch(DBURL+'/users/'+me.uid+'.json',{
-    method:'PUT',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({uid:me.uid,displayName:me.displayName,email:me.email})
-  }).catch(function(){});
+  fetch(DBURL+'/users/'+me.uid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({uid:me.uid,displayName:me.displayName,email:me.email})}).catch(function(){});
 }
 
 function enterApp(){
@@ -366,59 +346,95 @@ function enterApp(){
   document.getElementById('p-avatar').textContent=me.displayName.charAt(0).toUpperCase();
   loadGroups();
   requestLocation();
-  renderSosContacts();
+  renderContacts();
+  renderPlaces();
+  startReminderCheck();
 }
 
 function signout(){
   if(!confirm('Sign out?')) return;
   localStorage.removeItem('ls_me');
   me=null;
+  if(locWatchId) navigator.geolocation.clearWatch(locWatchId);
   document.getElementById('pg-app').classList.remove('on');
   document.getElementById('pg-login').classList.add('on');
   document.getElementById('l-btn').value='Sign In';
   document.getElementById('l-btn').disabled=false;
 }
 
-// ── LOCATION ───────────────────────────────────────────
+// ── NAVIGATION ────────────────────────────────────────────────────
+function showScreen(name,btn){
+  document.getElementById('chat-wrap').classList.remove('on');
+  document.getElementById('sc-members').classList.remove('on');
+  document.getElementById('hdr-back').style.display='none';
+  document.getElementById('hdr-action').style.display='none';
+  document.getElementById('app-title').textContent='📡 LocationShare';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('sc-'+name).classList.add('on');
+  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
+  if(btn) btn.classList.add('on');
+  if(name==='map') refreshLocs();
+  if(name==='places') renderPlaces();
+  if(name!=='chat'&&msgTimer){clearTimeout(msgTimer);msgTimer=null;}
+  prevScr=name;
+}
+
+function goBack(){
+  if(msgTimer){clearTimeout(msgTimer);msgTimer=null;}
+  document.getElementById('chat-wrap').classList.remove('on');
+  document.getElementById('sc-members').classList.remove('on');
+  document.getElementById('hdr-back').style.display='none';
+  document.getElementById('hdr-action').style.display='none';
+  document.getElementById('app-title').textContent='📡 LocationShare';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('sc-groups').classList.add('on');
+  document.querySelectorAll('.nav-item')[0].classList.add('on');
+  prevScr='groups';
+}
+
+function headerAction(){
+  if(prevScr==='chat'&&curGid) showGroupOptions(curGid);
+}
+
+// ── LOCATION ──────────────────────────────────────────────────────
 function requestLocation(){
   if(!navigator.geolocation){toast('Geolocation not supported');return;}
-  navigator.geolocation.getCurrentPosition(function(pos){
-    document.getElementById('loc-banner').classList.remove('on');
-    document.getElementById('loc-status-text').textContent='Location active ✅';
-    startWatchingLocation();
-  },function(err){
-    document.getElementById('loc-banner').classList.add('on');
-    document.getElementById('loc-status-text').textContent='Location blocked — tap to allow';
-    toast('⚠️ Please allow location access in browser settings');
+  navigator.geolocation.getCurrentPosition(function(p){
+    document.getElementById('loc-status-sub').textContent='Active ✅';
+    startWatching();
+  },function(){
+    document.getElementById('loc-status-sub').textContent='Blocked — tap to retry';
+    toast('⚠️ Please allow location in browser settings');
   },{enableHighAccuracy:true,timeout:10000});
 }
 
-function startWatchingLocation(){
+function startWatching(){
   if(locWatchId) navigator.geolocation.clearWatch(locWatchId);
-  locWatchId=navigator.geolocation.watchPosition(function(pos){
-    var loc={uid:me.uid,displayName:me.displayName,lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy,timestamp:Date.now(),sharing:true};
+  locWatchId=navigator.geolocation.watchPosition(function(p){
+    var loc={uid:me.uid,displayName:me.displayName,lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy,ts:Date.now(),sharing:true};
     memberLocs[me.uid]=loc;
     fetch(DBURL+'/locations/'+me.uid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(loc)}).catch(function(){});
-    document.getElementById('loc-status-text').textContent='📍 Location sharing active';
-    // Update map if visible
+    document.getElementById('loc-status-sub').textContent='Sharing 📍 '+loc.lat.toFixed(4)+', '+loc.lng.toFixed(4);
+    checkNearSafePlaces(loc.lat,loc.lng);
     if(document.getElementById('sc-map').classList.contains('on')) refreshLocs();
-  },function(){},{enableHighAccuracy:true,maximumAge:15000,timeout:20000});
+  },function(){},{enableHighAccuracy:true,maximumAge:15000,timeout:30000});
 }
 
-// ── GROUPS ─────────────────────────────────────────────
-var COLORS=['#E53935','#8E24AA','#1E88E5','#43A047','#FB8C00','#00ACC1','#6D4C41','#3949AB'];
+function dist(lat1,lng1,lat2,lng2){
+  var R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
 
+// ── GROUPS ────────────────────────────────────────────────────────
 function loadGroups(){
   if(!me) return;
-  fetch(DBURL+'/groups.json').then(function(r){return r.json();})
-  .then(function(data){
+  fetch(DBURL+'/groups.json').then(function(r){return r.json();}).then(function(data){
     myGroups=[];
-    if(data&&!data.error){
-      Object.keys(data).forEach(function(gid){
-        var g=data[gid];
-        if(g&&(g.members||[]).indexOf(me.uid)>=0) myGroups.push(Object.assign({id:gid},g));
-      });
-    }
+    if(data&&!data.error) Object.keys(data).forEach(function(gid){
+      var g=data[gid];
+      if(g&&(g.members||[]).indexOf(me.uid)>=0) myGroups.push(Object.assign({id:gid},g));
+    });
     myGroups.sort(function(a,b){return (b.lastMessageTime||0)-(a.lastMessageTime||0);});
     renderGroups();
   }).catch(function(){});
@@ -428,51 +444,45 @@ function loadGroups(){
 function renderGroups(){
   var el=document.getElementById('groups-list');
   if(!myGroups.length){
-    el.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">No groups yet</div><div class="empty-sub">Tap + to create a family group and share the invite code</div></div>';
+    el.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">No groups yet</div><div style="font-size:14px;color:var(--gray)">Tap + to create a family group</div></div>';
     return;
   }
-  el.innerHTML=myGroups.map(function(g,i){
+  el.innerHTML=myGroups.map(function(g){
     var color=COLORS[g.name.charCodeAt(0)%COLORS.length];
-    var last=g.lastMessage||'Tap to start chatting';
     return '<div class="group-card">'
       +'<div class="group-top">'
-      +'<div class="group-avatar" style="background:'+color+'">'+g.name.charAt(0).toUpperCase()+'</div>'
-      +'<div class="group-info"><div class="group-name">'+g.name+'</div><div class="group-meta">👥 '+(g.members||[]).length+' members • '+last+'</div></div>'
-      +'<div class="code-badge" data-code="'+g.inviteCode+'" onclick="copyCode(this)"><div class="code-text">'+g.inviteCode+'</div><div class="code-label">📋 COPY</div></div>'
+      +'<div class="g-avatar" style="background:'+color+'">'+g.name.charAt(0).toUpperCase()+'</div>'
+      +'<div class="g-info"><div class="g-name">'+g.name+'</div><div class="g-meta">👥 '+(g.members||[]).length+' members • '+(g.lastMessage||'No messages yet')+'</div></div>'
+      +'<div class="code-chip" data-code="'+g.inviteCode+'" onclick="copyCode(this)"><div class="code-val">'+g.inviteCode+'</div><div class="code-lbl">📋 COPY</div></div>'
       +'</div>'
-      +'<div class="group-actions">'
-      +'<input type="button" class="action-btn btn-chat" value="💬 Chat" data-gid="'+g.id+'" data-gname="'+g.name+'" onclick="openChat(this.dataset.gid,this.dataset.gname)">'
-      +'<input type="button" class="action-btn btn-members" value="👥 Members" data-gid="'+g.id+'" onclick="openMembers(this.dataset.gid)">'
+      +'<div class="g-actions">'
+      +'<input type="button" class="g-btn" style="background:var(--blue);color:#fff" value="💬 Chat" data-gid="'+g.id+'" data-gname="'+g.name+'" onclick="openChat(this.dataset.gid,this.dataset.gname)">'
+      +'<input type="button" class="g-btn" style="background:#EEF4FF;color:var(--blue)" value="👥 Members" data-gid="'+g.id+'" onclick="openMembers(this.dataset.gid)">'
       +'</div></div>';
   }).join('');
 }
 
 function newgroup(){
-  var name=prompt('Group name (e.g. Family, Friends):');
+  var name=prompt('Group name (e.g. Family):');
   if(!name||!name.trim()) return;
   var code=Math.random().toString(36).substr(2,6).toUpperCase();
   var gid='g'+Date.now();
-  fetch(DBURL+'/groups/'+gid+'.json',{
-    method:'PUT',headers:{'Content-Type':'application/json'},
+  fetch(DBURL+'/groups/'+gid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({name:name.trim(),createdBy:me.uid,members:[me.uid],admins:[me.uid],inviteCode:code,lastMessage:'',lastMessageTime:Date.now(),createdAt:Date.now()})
-  }).then(function(){
-    toast('✅ Group created! Code: '+code);
-    loadGroups();
-  }).catch(function(e){toast('Error: '+e.message);});
+  }).then(function(){toast('✅ Group created! Code: '+code);loadGroups();}).catch(function(e){toast('Error: '+e.message);});
 }
 
 function joingroup(){
-  var code=prompt('Enter invite code:');
+  closeModal();
+  var code=prompt('Enter 6-character invite code:');
   if(!code) return;
   code=code.trim().toUpperCase();
-  fetch(DBURL+'/groups.json').then(function(r){return r.json();})
-  .then(function(data){
+  fetch(DBURL+'/groups.json').then(function(r){return r.json();}).then(function(data){
     var gid=null,g=null;
     if(data) Object.keys(data).forEach(function(k){if(data[k]&&data[k].inviteCode===code){gid=k;g=data[k];}});
     if(!gid){toast('❌ No group found with code: '+code);return;}
-    var members=(g.members||[]);
-    if(members.indexOf(me.uid)>=0){toast('Already in this group!');return;}
-    members.push(me.uid);
+    if((g.members||[]).indexOf(me.uid)>=0){toast('Already in this group!');return;}
+    var members=(g.members||[]).concat([me.uid]);
     fetch(DBURL+'/groups/'+gid+'/members.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(members)})
     .then(function(){toast('✅ Joined '+g.name+'!');loadGroups();});
   });
@@ -480,75 +490,60 @@ function joingroup(){
 
 function copyCode(el){
   var code=el.dataset.code||el.getAttribute('data-code');
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(code).then(function(){toast('✅ Code "'+code+'" copied! Share with family');}).catch(function(){prompt('Copy this code:',code);});
-  } else { prompt('Copy this code:',code); }
+  if(navigator.clipboard){navigator.clipboard.writeText(code).then(function(){toast('✅ Code "'+code+'" copied!');}).catch(function(){prompt('Copy:',code);});}
+  else{prompt('Copy this code:',code);}
 }
 
-// ── CHAT ───────────────────────────────────────────────
+// ── CHAT ──────────────────────────────────────────────────────────
 function openChat(gid,gname){
-  curGid=gid;
+  curGid=gid; curGname=gname;
   document.getElementById('app-title').textContent='💬 '+gname;
   document.getElementById('hdr-back').style.display='block';
+  document.getElementById('hdr-action').style.display='block';
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
-  document.getElementById('chat-screen').classList.add('on');
-  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
-  document.getElementById('chat-msgs').innerHTML='<div style="text-align:center;color:#999;padding:30px;font-size:13px">Loading messages...</div>';
-  if(msgTimer) clearTimeout(msgTimer);
-  loadMsgs();
-  prevScreen='chat';
-}
-
-function goBack(){
-  document.getElementById('chat-screen').classList.remove('on');
   document.getElementById('sc-members').classList.remove('on');
-  document.getElementById('hdr-back').style.display='none';
-  document.getElementById('app-title').textContent='📡 LocationShare';
-  document.getElementById('sc-groups').classList.add('on');
-  document.querySelectorAll('.nav-item')[0].classList.add('on');
+  document.getElementById('chat-wrap').classList.add('on');
+  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('chat-msgs').innerHTML='<div style="text-align:center;color:#999;padding:30px;font-size:13px">Loading...</div>';
   if(msgTimer){clearTimeout(msgTimer);msgTimer=null;}
-  prevScreen='groups';
-}
-
-function showScreen(name,btn){
-  document.getElementById('chat-screen').classList.remove('on');
-  document.getElementById('sc-members').classList.remove('on');
-  document.getElementById('hdr-back').style.display='none';
-  document.getElementById('app-title').textContent='📡 LocationShare';
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
-  document.getElementById('sc-'+name).classList.add('on');
-  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
-  if(btn) btn.classList.add('on');
-  if(name==='map') refreshLocs();
-  if(msgTimer&&name!=='chat'){clearTimeout(msgTimer);msgTimer=null;}
+  loadMsgs();
+  prevScr='chat';
 }
 
 function loadMsgs(){
   if(!curGid||!me) return;
-  fetch(DBURL+'/messages/'+curGid+'.json?orderBy=%22timestamp%22')
-  .then(function(r){return r.json();})
-  .then(function(data){
+  fetch(DBURL+'/messages/'+curGid+'.json?orderBy=%22ts%22').then(function(r){return r.json();}).then(function(data){
     var box=document.getElementById('chat-msgs');
-    if(!data||data.error){box.innerHTML='<div class="msg-system">No messages yet. Say hello! 👋</div>';return;}
-    var msgs=Object.keys(data).map(function(k){return data[k];}).sort(function(a,b){return (a.timestamp||0)-(b.timestamp||0);});
+    if(!data||data.error){box.innerHTML='<div class="sys-msg">No messages yet. Say hello! 👋</div>';
+      if(msgTimer) clearTimeout(msgTimer);
+      msgTimer=setTimeout(loadMsgs,5000);
+      return;
+    }
+    var msgs=Object.keys(data).map(function(k){return data[k];}).sort(function(a,b){return (a.ts||0)-(b.ts||0);});
+    var wasBottom=box.scrollHeight-box.scrollTop-box.clientHeight<80;
     box.innerHTML=msgs.map(function(m){
-      var mine=m.senderId===me.uid;
-      var time=m.timestamp?new Date(m.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
-      if(m.type==='system') return '<div class="msg-system">'+m.content+'</div>';
-      if(m.type==='location') return '<div class="msg-wrap '+(mine?'me':'you')+'">'
-        +(!mine?'<div class="msg-name">'+m.senderName+'</div>':'')
-        +'<a href="https://maps.google.com/?q='+m.lat+','+m.lng+'" target="_blank" style="display:block;background:'+(mine?'#DCF8C6':'#fff')+';border-radius:14px;padding:10px 14px;text-decoration:none;color:var(--text);box-shadow:0 1px 3px #00000010">'
+      var mine=m.uid===me.uid;
+      var time=m.ts?new Date(m.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
+      if(m.type==='system') return '<div class="sys-msg">'+m.txt+'</div>';
+      if(m.type==='loc') return '<div class="mw '+(mine?'me':'you')+'">'
+        +(!mine?'<div class="mn">'+m.name+'</div>':'')
+        +'<a href="https://maps.google.com/?q='+m.lat+','+m.lng+'" target="_blank" style="display:block;background:'+(mine?'#DCF8C6':'#fff')+';border-radius:14px;padding:10px 14px;text-decoration:none;box-shadow:0 1px 3px #00000010">'
         +'<div style="font-size:13px;font-weight:700;color:var(--blue)">📍 Shared Location</div>'
         +'<div style="font-size:12px;color:var(--gray);margin-top:2px">'+m.lat.toFixed(4)+', '+m.lng.toFixed(4)+'</div>'
-        +'<div style="font-size:12px;color:var(--blue);margin-top:4px;font-weight:600">Tap to open in Maps →</div>'
-        +'</a>'
-        +'<div class="msg-time">'+time+'</div></div>';
-      return '<div class="msg-wrap '+(mine?'me':'you')+'">'
-        +(!mine?'<div class="msg-name">'+m.senderName+'</div>':'')
-        +'<div class="msg-bubble '+(mine?'me':'you')+'">'+m.content+'</div>'
-        +'<div class="msg-time">'+time+'</div></div>';
+        +'<div style="font-size:12px;color:var(--blue);margin-top:4px;font-weight:600">Tap to open Maps →</div>'
+        +'</a><div class="mt">'+time+'</div></div>';
+      if(m.type==='sos') return '<div class="mw '+(mine?'me':'you')+'">'
+        +(!mine?'<div class="mn">'+m.name+'</div>':'')
+        +'<div class="mb sos-msg"><div style="font-size:15px;font-weight:800;color:var(--red);margin-bottom:6px">🆘 SOS ALERT!</div>'
+        +'<div style="font-size:13px;margin-bottom:8px">'+m.txt+'</div>'
+        +(m.lat?'<a href="https://maps.google.com/?q='+m.lat+','+m.lng+'" target="_blank" style="display:block;text-align:center;background:var(--red);color:#fff;padding:8px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">📍 View Location</a>':'')
+        +'</div><div class="mt">'+time+'</div></div>';
+      return '<div class="mw '+(mine?'me':'you')+'">'
+        +(!mine?'<div class="mn">'+m.name+'</div>':'')
+        +'<div class="mb '+(mine?'me':'you')+'">'+m.txt+'</div>'
+        +'<div class="mt">'+time+'</div></div>';
     }).join('');
-    box.scrollTop=box.scrollHeight;
+    if(wasBottom||msgs.length<5) box.scrollTop=box.scrollHeight;
     if(msgTimer) clearTimeout(msgTimer);
     msgTimer=setTimeout(loadMsgs,5000);
   }).catch(function(){if(msgTimer)clearTimeout(msgTimer);msgTimer=setTimeout(loadMsgs,10000);});
@@ -559,62 +554,114 @@ function sendmsg(){
   if(!txt||!curGid) return;
   document.getElementById('chat-input').value='';
   document.getElementById('chat-input').style.height='';
-  var msg={senderId:me.uid,senderName:me.displayName,content:txt,timestamp:Date.now(),type:'text'};
-  fetch(DBURL+'/messages/'+curGid+'/m'+Date.now()+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)}).then(function(){loadMsgs();});
+  var msg={uid:me.uid,name:me.displayName,txt:txt,ts:Date.now(),type:'text'};
+  var key='m'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
+  fetch(DBURL+'/messages/'+curGid+'/'+key+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)})
+  .then(function(){loadMsgs();}).catch(function(){toast('Send failed');});
   fetch(DBURL+'/groups/'+curGid+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({lastMessage:txt,lastMessageTime:Date.now()})}).catch(function(){});
 }
 
 function sendLocation(){
-  if(!curGid) return;
   var loc=memberLocs[me.uid];
-  if(!loc){toast('📍 Getting your location...');requestLocation();return;}
-  var msg={senderId:me.uid,senderName:me.displayName,content:'📍 Location',lat:loc.lat,lng:loc.lng,timestamp:Date.now(),type:'location'};
-  fetch(DBURL+'/messages/'+curGid+'/m'+Date.now()+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)}).then(function(){loadMsgs();});
+  if(!loc){toast('📍 Getting location...');requestLocation();return;}
+  if(!curGid) return;
+  var msg={uid:me.uid,name:me.displayName,txt:'📍 Location',lat:loc.lat,lng:loc.lng,ts:Date.now(),type:'loc'};
+  var key='l'+Date.now();
+  fetch(DBURL+'/messages/'+curGid+'/'+key+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)})
+  .then(function(){loadMsgs();}).catch(function(){toast('Send failed');});
   fetch(DBURL+'/groups/'+curGid+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({lastMessage:'📍 Location',lastMessageTime:Date.now()})}).catch(function(){});
 }
 
-// ── MEMBERS ─────────────────────────────────────────────
+document.getElementById('chat-input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendmsg();}});
+document.getElementById('chat-input').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';});
+
+function showGroupOptions(gid){
+  var g=myGroups.find(function(x){return x.id===gid;});
+  if(!g) return;
+  var isAdmin=(g.admins||[]).indexOf(me.uid)>=0||g.createdBy===me.uid;
+  showModal('Group Options',
+    '<input type="button" class="btn btn-ghost" value="👥 View Members" onclick="closeModal();openMembers(\''+gid+'\')" style="margin-bottom:8px">'
+    +'<input type="button" class="btn btn-ghost" value="📋 Copy Invite Code ('+g.inviteCode+')" data-code="'+g.inviteCode+'" onclick="copyCode(this)" style="margin-bottom:8px">'
+    +'<input type="button" class="btn btn-orange" value="🚪 Leave Group" onclick="closeModal();leaveGroup(\''+gid+'\')" style="margin-bottom:8px">'
+    +(isAdmin?'<input type="button" class="btn btn-red" value="🗑️ Delete Group" onclick="closeModal();deleteGroup(\''+gid+'\')">':'')
+  );
+}
+
+// ── MEMBERS ───────────────────────────────────────────────────────
 function openMembers(gid){
   var g=myGroups.find(function(x){return x.id===gid;});
   if(!g) return;
   curGid=gid;
   document.getElementById('app-title').textContent='👥 '+g.name;
   document.getElementById('hdr-back').style.display='block';
+  document.getElementById('chat-wrap').classList.remove('on');
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
   document.getElementById('sc-members').classList.add('on');
   document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
-  document.getElementById('members-content').innerHTML='<div style="text-align:center;color:#999;padding:30px">Loading...</div>';
-  
-  var t=setTimeout(function(){renderMembers(g,gid);},8000);
+  document.getElementById('members-content').innerHTML='<div style="text-align:center;color:#999;padding:30px">Loading members...</div>';
+  var t=setTimeout(function(){renderMembers(g);},8000);
   var proms=g.members.map(function(uid){
     var p1=fetch(DBURL+'/locations/'+uid+'.json').then(function(r){return r.json();}).then(function(d){if(d&&d.lat) memberLocs[uid]=Object.assign(memberLocs[uid]||{},d);}).catch(function(){});
     var p2=fetch(DBURL+'/users/'+uid+'.json').then(function(r){return r.json();}).then(function(d){if(d&&d.displayName){if(!memberLocs[uid]) memberLocs[uid]={};memberLocs[uid].displayName=d.displayName;}}).catch(function(){});
     return Promise.all([p1,p2]);
   });
-  Promise.all(proms).then(function(){clearTimeout(t);renderMembers(g,gid);});
+  Promise.all(proms).then(function(){clearTimeout(t);renderMembers(g);});
 }
 
-function renderMembers(g,gid){
+function getMemberStatus(uid){
+  var loc=memberLocs[uid];
+  if(!loc||!loc.lat) return {status:'unknown',color:'#999',dot:'dot-gray',label:'No location'};
+  // Check if near any safe place
+  for(var i=0;i<safePlaces.length;i++){
+    var p=safePlaces[i];
+    if(p.lat&&p.lng&&dist(loc.lat,loc.lng,p.lat,p.lng)<200){
+      return {status:'safe',color:COLORS[3],dot:'dot-green',label:'Near '+p.name,place:p};
+    }
+  }
+  // Check check-in status
+  if(sosSettings.checkedIn&&uid===me.uid) return {status:'safe',color:COLORS[3],dot:'dot-green',label:'Checked in safe'};
+  // Check if stale
+  var age=Date.now()-(loc.ts||0);
+  if(age>3600000) return {status:'unknown',color:'#999',dot:'dot-gray',label:'Last seen '+timeAgo(loc.ts)};
+  return {status:'outside',color:COLORS[4],dot:'dot-yellow',label:'Outside safe places'};
+}
+
+function renderMembers(g){
+  var gid=g.id;
   var isAdmin=(g.admins||[]).indexOf(me.uid)>=0||g.createdBy===me.uid;
-  var html='<div class="invite-box"><div><div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px">Invite Code</div><div class="invite-code">'+g.inviteCode+'</div></div>'
-    +'<input type="button" value="📋 Copy" data-code="'+g.inviteCode+'" onclick="copyCode(this)" style="background:var(--blue);color:#fff;border:none;border-radius:12px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none"></div>';
+  var html='<div style="background:#EEF4FF;border-radius:14px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">'
+    +'<div><div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase">Invite Code</div>'
+    +'<div style="font-size:24px;font-weight:800;color:var(--blue);letter-spacing:5px">'+g.inviteCode+'</div></div>'
+    +'<input type="button" value="📋 Copy" data-code="'+g.inviteCode+'" onclick="copyCode(this)" style="background:var(--blue);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none"></div>';
+  
+  // Legend
+  html+='<div style="display:flex;gap:12px;margin-bottom:12px;font-size:11px;font-weight:600;color:var(--gray)">'
+    +'<span><span class="status-dot dot-green"></span>Near safe place</span>'
+    +'<span><span class="status-dot dot-yellow"></span>Outside</span>'
+    +'<span><span class="status-dot dot-gray"></span>Unknown</span></div>';
+
   html+=g.members.map(function(uid){
     var isMe=uid===me.uid;
     var loc=memberLocs[uid]||{};
     var name=loc.displayName||(isMe?me.displayName:'Member');
     var color=COLORS[name.charCodeAt(0)%COLORS.length];
-    var hasLoc=loc.lat&&loc.lng;
-    return '<div class="member-card">'
-      +'<div class="member-avatar" style="background:'+(isMe?'var(--blue)':color)+'">'+name.charAt(0).toUpperCase()+'</div>'
-      +'<div class="member-info"><div class="member-name">'+name+(isMe?' (You)':'')+'</div>'
-      +(hasLoc?'<div class="member-loc">📍 '+loc.lat.toFixed(4)+', '+loc.lng.toFixed(4)+'</div><div class="member-time">'+timeAgo(loc.timestamp)+'</div><a class="maps-link" href="https://maps.google.com/?q='+loc.lat+','+loc.lng+'" target="_blank">🗺️ Open in Maps</a>':'<div class="member-loc">📍 Location not shared yet</div>')
+    var st=getMemberStatus(uid);
+    var statusClass=st.status==='safe'?'status-safe':st.status==='outside'?'status-outside':'status-unknown';
+    return '<div class="member-card '+statusClass+'">'
+      +'<div class="m-avatar" style="background:'+(isMe?'var(--blue)':color)+'">'+name.charAt(0).toUpperCase()+'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-weight:700;font-size:14px">'+name+(isMe?' (You)':'')+'</div>'
+      +'<div style="font-size:12px;margin-top:3px"><span class="status-dot '+st.dot+'"></span>'+st.label+'</div>'
+      +(loc.lat?'<div style="font-size:11px;color:var(--gray);margin-top:2px">📍 '+loc.lat.toFixed(4)+', '+loc.lng.toFixed(4)+' • '+timeAgo(loc.ts||0)+'</div>':'')
+      +(loc.lat?'<a class="maps-link" href="https://maps.google.com/?q='+loc.lat+','+loc.lng+'" target="_blank" style="display:inline-block;margin-top:6px;background:#EEF4FF;color:var(--blue);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">🗺️ Open Maps</a>':'')
       +'</div></div>';
   }).join('');
-  html+='<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">';
-  html+='<input type="button" value="💬 Open Chat" data-gid="'+gid+'" data-gname="'+g.name+'" onclick="openChat(this.dataset.gid,this.dataset.gname)" style="flex:1;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">';
-  html+='<input type="button" value="🚪 Leave" data-gid="'+gid+'" onclick="leaveGroup(this.dataset.gid)" style="flex:1;background:var(--orange);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">';
-  if(isAdmin) html+='<input type="button" value="🗑️ Delete" data-gid="'+gid+'" onclick="deleteGroup(this.dataset.gid)" style="flex:1;background:var(--red);color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">';
-  html+='</div>';
+
+  html+='<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">'
+    +'<input type="button" value="💬 Chat" data-gid="'+gid+'" data-gname="'+g.name+'" onclick="openChat(this.dataset.gid,this.dataset.gname)" style="flex:1;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
+    +'<input type="button" value="🚪 Leave" data-gid="'+gid+'" onclick="leaveGroup(this.dataset.gid)" style="flex:1;background:var(--orange);color:#fff;border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">'
+    +(isAdmin?'<input type="button" value="🗑️ Delete" data-gid="'+gid+'" onclick="deleteGroup(this.dataset.gid)" style="flex:1;background:var(--red);color:#fff;border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;-webkit-appearance:none">':'')
+    +'</div>';
   document.getElementById('members-content').innerHTML=html;
 }
 
@@ -633,101 +680,344 @@ function deleteGroup(gid){
   Promise.all([
     fetch(DBURL+'/groups/'+gid+'.json',{method:'DELETE'}),
     fetch(DBURL+'/messages/'+gid+'.json',{method:'DELETE'})
-  ]).then(function(){toast('Group deleted');goBack();loadGroups();}).catch(function(e){toast('Error: '+e.message);});
+  ]).then(function(){toast('Group deleted');goBack();loadGroups();}).catch(function(e){toast('Error');});
 }
 
-// ── MAP ─────────────────────────────────────────────────
+// ── MAP ────────────────────────────────────────────────────────────
 function refreshLocs(){
-  var allMembers=[];
-  myGroups.forEach(function(g){(g.members||[]).forEach(function(uid){if(allMembers.indexOf(uid)<0) allMembers.push(uid);});});
-  if(!allMembers.length){document.getElementById('map-content').innerHTML='<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-title">No groups yet</div><div class="empty-sub">Join or create a group to see member locations</div></div>';return;}
-  var proms=allMembers.map(function(uid){
-    return fetch(DBURL+'/locations/'+uid+'.json').then(function(r){return r.json();}).then(function(d){if(d&&d.lat) memberLocs[uid]=Object.assign(memberLocs[uid]||{},d);}).catch(function(){});
+  var all=[];
+  myGroups.forEach(function(g){(g.members||[]).forEach(function(uid){if(all.indexOf(uid)<0) all.push(uid);});});
+  if(!all.length){document.getElementById('map-content').innerHTML='<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-title">No groups yet</div></div>';return;}
+  var proms=all.map(function(uid){
+    var p1=fetch(DBURL+'/locations/'+uid+'.json').then(function(r){return r.json();}).then(function(d){if(d&&d.lat) memberLocs[uid]=Object.assign(memberLocs[uid]||{},d);}).catch(function(){});
+    var p2=fetch(DBURL+'/users/'+uid+'.json').then(function(r){return r.json();}).then(function(d){if(d&&d.displayName){if(!memberLocs[uid]) memberLocs[uid]={};memberLocs[uid].displayName=d.displayName;}}).catch(function(){});
+    return Promise.all([p1,p2]);
   });
   Promise.all(proms).then(function(){
-    var html=allMembers.map(function(uid){
+    var html=all.map(function(uid){
       var loc=memberLocs[uid]||{};
       var name=loc.displayName||(uid===me.uid?me.displayName:'Member');
       var color=COLORS[name.charCodeAt(0)%COLORS.length];
-      if(!loc.lat) return '<div class="loc-card"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">'+name.charAt(0).toUpperCase()+'</div><div><div class="loc-name">'+name+(uid===me.uid?' (You)':'')+'</div><div class="loc-coords">No location yet</div></div></div></div>';
-      return '<div class="loc-card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">'+name.charAt(0).toUpperCase()+'</div><div><div class="loc-name">'+name+(uid===me.uid?' (You)':'')+'</div><div class="loc-coords">Updated '+timeAgo(loc.timestamp)+'</div></div></div>'
-        +'<div class="loc-coords" style="margin-bottom:8px">📍 '+loc.lat.toFixed(5)+', '+loc.lng.toFixed(5)+'</div>'
+      var st=getMemberStatus(uid);
+      if(!loc.lat) return '<div class="loc-card" style="border-left:4px solid #ccc"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:'+color+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">'+name.charAt(0).toUpperCase()+'</div><div><div style="font-weight:700">'+name+(uid===me.uid?' (You)':'')+'</div><div style="font-size:12px;color:var(--gray)">No location yet</div></div></div></div>';
+      return '<div class="loc-card" style="border-left:4px solid '+st.color+'">'
+        +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+        +'<div style="width:36px;height:36px;border-radius:50%;background:'+st.color+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">'+name.charAt(0).toUpperCase()+'</div>'
+        +'<div><div style="font-weight:700">'+name+(uid===me.uid?' (You)':'')+'</div>'
+        +'<div style="font-size:12px;color:var(--gray)"><span class="status-dot '+st.dot+'"></span>'+st.label+'</div></div></div>'
+        +'<div style="font-size:12px;color:var(--gray);margin-bottom:8px">📍 '+loc.lat.toFixed(5)+', '+loc.lng.toFixed(5)+' • '+timeAgo(loc.ts||0)+'</div>'
         +'<a href="https://maps.google.com/?q='+loc.lat+','+loc.lng+'" target="_blank" style="display:block;text-align:center;background:var(--blue);color:#fff;padding:10px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">🗺️ Open in Google Maps</a></div>';
     }).join('');
-    document.getElementById('map-content').innerHTML=html;
-    toast('✅ Locations refreshed');
+    document.getElementById('map-content').innerHTML=html||'<div class="empty"><div class="empty-icon">📍</div><div class="empty-title">No locations yet</div></div>';
+    toast('✅ Refreshed');
   });
 }
 
-// ── SOS ─────────────────────────────────────────────────
-var sosHoldTimer=null;
-function startSos(){
-  if(sosActive) return;
-  document.getElementById('sos-status').textContent='Keep holding... (3 seconds)';
-  sosHoldTimer=setTimeout(function(){triggerSos();},3000);
+// ── SAFE PLACES ───────────────────────────────────────────────────
+var PLACE_ICONS=['🏠','🏢','🏫','🏋️','☕','🍽️','🏥','⛽','🌳','🏖️','🕌','🏪'];
+
+function renderPlaces(){
+  var el=document.getElementById('places-list');
+  if(!safePlaces.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">No safe places yet</div><div style="font-size:14px;color:var(--gray)">Add Home, Office, School etc.</div></div>';
+    return;
+  }
+  el.innerHTML=safePlaces.map(function(p,i){
+    return '<div class="place-card">'
+      +'<div class="place-icon" style="background:'+COLORS[i%COLORS.length]+'22">'+p.icon+'</div>'
+      +'<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px">'+p.name+'</div>'
+      +(p.lat?'<div style="font-size:12px;color:var(--gray);margin-top:2px">📍 '+p.lat.toFixed(4)+', '+p.lng.toFixed(4)+'</div>':'<div style="font-size:12px;color:var(--orange);margin-top:2px">⚠️ No location set</div>')
+      +'<div style="font-size:11px;color:var(--gray);margin-top:1px">Safe radius: '+( p.radius||200)+'m</div>'
+      +'</div>'
+      +'<div style="display:flex;flex-direction:column;gap:6px">'
+      +'<input type="button" value="✏️" data-idx="'+i+'" onclick="editPlace(parseInt(this.dataset.idx))" style="background:#EEF4FF;color:var(--blue);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;-webkit-appearance:none">'
+      +'<input type="button" value="🗑️" data-idx="'+i+'" onclick="deletePlace(parseInt(this.dataset.idx))" style="background:#FFEBEE;color:var(--red);border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;-webkit-appearance:none">'
+      +'</div></div>';
+  }).join('');
 }
-function cancelSosHold(){
-  if(sosActive) return;
-  clearTimeout(sosHoldTimer);
-  document.getElementById('sos-status').textContent='Hold the SOS button for 3 seconds to alert all group members with your location';
+
+function addPlace(){
+  showModal('Add Safe Place',
+    '<div class="field"><label>Place Name</label><input type="text" id="m-pname" placeholder="e.g. Home, Office, School"></div>'
+    +'<div class="field"><label>Icon</label><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">'+PLACE_ICONS.map(function(ic,i){return '<button data-icon="'+ic+'" onclick="selectIcon(this)" style="font-size:24px;background:#f5f5f5;border:2px solid transparent;border-radius:10px;padding:6px;cursor:pointer;width:44px;height:44px">'+ic+'</button>';}).join('')+'</div></div>'
+    +'<div class="field"><label>Safe Radius</label><select id="m-radius" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;-webkit-appearance:none"><option value="100">100m (very close)</option><option value="200" selected>200m (standard)</option><option value="500">500m (neighborhood)</option><option value="1000">1km (area)</option></select></div>'
+    +'<input type="button" value="📍 Use My Current Location" onclick="setPlaceLocation()" style="width:100%;background:#E8F5E9;color:var(--green);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-bottom:8px">'
+    +'<div id="m-ploc" style="font-size:12px;color:var(--gray);text-align:center;margin-bottom:8px">No location set</div>'
+    +'<input type="button" class="btn btn-blue" value="Save Place" onclick="savePlace()">'
+  );
+  window._editIdx=-1;
+  window._selIcon='🏠';
+  window._plat=null;window._plng=null;
 }
-function triggerSos(){
-  sosActive=true;
-  if(navigator.vibrate) navigator.vibrate([200,100,200,100,200]);
-  document.getElementById('sos-btn').classList.add('active');
-  document.getElementById('sos-btn').innerHTML='🆘<span class="sos-label">ACTIVE</span>';
-  document.getElementById('sos-status').textContent='🔴 SOS active! Alerting all group members...';
-  document.getElementById('sos-bar').classList.add('on');
+
+function editPlace(idx){
+  var p=safePlaces[idx];
+  if(!p) return;
+  showModal('Edit Safe Place',
+    '<div class="field"><label>Place Name</label><input type="text" id="m-pname" value="'+p.name+'" placeholder="e.g. Home"></div>'
+    +'<div class="field"><label>Icon</label><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">'+PLACE_ICONS.map(function(ic){return '<button data-icon="'+ic+'" onclick="selectIcon(this)" style="font-size:24px;background:'+(ic===p.icon?'#EEF4FF':'#f5f5f5')+';border:2px solid '+(ic===p.icon?'var(--blue)':'transparent')+';border-radius:10px;padding:6px;cursor:pointer;width:44px;height:44px">'+ic+'</button>';}).join('')+'</div></div>'
+    +'<div class="field"><label>Safe Radius</label><select id="m-radius" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:12px;font-size:15px"><option value="100" '+(p.radius===100?'selected':'')+'>100m</option><option value="200" '+((!p.radius||p.radius===200)?'selected':'')+'>200m</option><option value="500" '+(p.radius===500?'selected':'')+'>500m</option><option value="1000" '+(p.radius===1000?'selected':'')+'>1km</option></select></div>'
+    +'<input type="button" value="📍 Update Location" onclick="setPlaceLocation()" style="width:100%;background:#E8F5E9;color:var(--green);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-bottom:8px">'
+    +'<div id="m-ploc" style="font-size:12px;color:var(--gray);text-align:center;margin-bottom:8px">'+(p.lat?'📍 '+p.lat.toFixed(4)+', '+p.lng.toFixed(4):'No location set')+'</div>'
+    +'<input type="button" class="btn btn-blue" value="Save Changes" onclick="savePlace()">'
+  );
+  window._editIdx=idx;
+  window._selIcon=p.icon||'🏠';
+  window._plat=p.lat||null; window._plng=p.lng||null;
+}
+
+function selectIcon(btn){
+  document.querySelectorAll('#modal-body button[data-icon]').forEach(function(b){b.style.background='#f5f5f5';b.style.borderColor='transparent';});
+  btn.style.background='#EEF4FF'; btn.style.borderColor='var(--blue)';
+  window._selIcon=btn.dataset.icon;
+}
+
+function setPlaceLocation(){
   var loc=memberLocs[me.uid];
-  var mapsLink=loc?'https://maps.google.com/?q='+loc.lat+','+loc.lng:'(location not available)';
+  if(loc&&loc.lat){
+    window._plat=loc.lat; window._plng=loc.lng;
+    document.getElementById('m-ploc').textContent='📍 '+loc.lat.toFixed(4)+', '+loc.lng.toFixed(4);
+    toast('Location set!');
+  } else {
+    navigator.geolocation.getCurrentPosition(function(p){
+      window._plat=p.coords.latitude; window._plng=p.coords.longitude;
+      document.getElementById('m-ploc').textContent='📍 '+window._plat.toFixed(4)+', '+window._plng.toFixed(4);
+      toast('Location captured!');
+    },function(){toast('Could not get location');});
+  }
+}
+
+function savePlace(){
+  var name=document.getElementById('m-pname').value.trim();
+  var radius=parseInt(document.getElementById('m-radius').value)||200;
+  if(!name){toast('Enter place name');return;}
+  var place={name:name,icon:window._selIcon||'🏠',lat:window._plat,lng:window._plng,radius:radius};
+  if(window._editIdx>=0) safePlaces[window._editIdx]=place;
+  else safePlaces.push(place);
+  localStorage.setItem('safe_places',JSON.stringify(safePlaces));
+  closeModal();
+  renderPlaces();
+  toast('✅ '+name+' saved!');
+}
+
+function deletePlace(idx){
+  if(!confirm('Delete "'+safePlaces[idx].name+'"?')) return;
+  safePlaces.splice(idx,1);
+  localStorage.setItem('safe_places',JSON.stringify(safePlaces));
+  renderPlaces();
+}
+
+function checkNearSafePlaces(lat,lng){
+  for(var i=0;i<safePlaces.length;i++){
+    var p=safePlaces[i];
+    if(p.lat&&p.lng&&dist(lat,lng,p.lat,p.lng)<(p.radius||200)){
+      if(!sosSettings.checkedIn){
+        sosSettings.checkedIn=true;
+        sosSettings.reminderCount=0;
+        localStorage.setItem('sos_settings',JSON.stringify(sosSettings));
+        document.getElementById('reminder-banner').classList.remove('on');
+        toast('✅ You are near '+p.name+' — marked safe');
+        notifyGroups('✅ '+me.displayName+' has arrived at '+p.name);
+      }
+      return;
+    }
+  }
+  sosSettings.checkedIn=false;
+  localStorage.setItem('sos_settings',JSON.stringify(sosSettings));
+}
+
+function notifyGroups(txt){
   myGroups.forEach(function(g){
-    var msg={senderId:me.uid,senderName:me.displayName,content:'🆘 SOS ALERT! '+me.displayName+' needs help! Location: '+mapsLink,type:'sos',lat:loc?loc.lat:null,lng:loc?loc.lng:null,timestamp:Date.now()};
+    var msg={uid:me.uid,name:me.displayName,txt:txt,ts:Date.now(),type:'system'};
+    fetch(DBURL+'/messages/'+g.id+'/sys'+Date.now()+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)}).catch(function(){});
+  });
+}
+
+// ── REMINDER / CHECK-IN SYSTEM ────────────────────────────────────
+function startReminderCheck(){
+  if(reminderInterval) clearInterval(reminderInterval);
+  reminderInterval=setInterval(checkReminder,60000);
+  checkReminder();
+}
+
+function checkReminder(){
+  if(!safePlaces.length||sosSettings.checkedIn) return;
+  var now=new Date();
+  var parts=(sosSettings.checkInTime||'22:00').split(':');
+  var checkTime=new Date();
+  checkTime.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
+  if(now<checkTime) return; // not yet time
+  var lastR=sosSettings.lastReminder||0;
+  var timeSinceLast=Date.now()-lastR;
+  if(timeSinceLast<1800000&&lastR>0) return; // sent reminder within 30 min
+  // Send reminder
+  sosSettings.reminderCount=(sosSettings.reminderCount||0)+1;
+  sosSettings.lastReminder=Date.now();
+  localStorage.setItem('sos_settings',JSON.stringify(sosSettings));
+  var count=sosSettings.reminderCount;
+  document.getElementById('reminder-banner').classList.add('on');
+  document.getElementById('reminder-txt').textContent='⚠️ Reminder #'+count+': Are you safe? Please check in!';
+  if(navigator.vibrate) navigator.vibrate([300,100,300]);
+  // After 3 reminders, auto-trigger SOS every 30 min
+  if(count>=3&&!sosActive){
+    toast('🆘 3 reminders missed — Auto SOS triggered!',5000);
+    setTimeout(function(){if(!sosActive) triggerSos(true);},3000);
+  }
+}
+
+function checkInSafe(){
+  sosSettings.checkedIn=true;
+  sosSettings.reminderCount=0;
+  sosSettings.lastReminder=0;
+  localStorage.setItem('sos_settings',JSON.stringify(sosSettings));
+  document.getElementById('reminder-banner').classList.remove('on');
+  toast('✅ Marked as safe!');
+  notifyGroups('✅ '+me.displayName+' checked in safe.');
+}
+
+// ── SOS ───────────────────────────────────────────────────────────
+var _sosProgressTimer=null;
+
+function startSosHold(){
+  if(sosActive) return;
+  document.getElementById('sos-status').textContent='Keep holding... releasing will cancel';
+  document.getElementById('sos-ring').classList.add('active');
+  var count=3;
+  document.getElementById('sos-inner').innerHTML=count+'<span class="sos-sub">KEEP HOLDING</span>';
+  _sosProgressTimer=setInterval(function(){
+    count--;
+    if(count<=0){clearInterval(_sosProgressTimer);triggerSos(false);}
+    else document.getElementById('sos-inner').innerHTML=count+'<span class="sos-sub">KEEP HOLDING</span>';
+  },1000);
+}
+
+function stopSosHold(){
+  if(sosActive) return;
+  clearInterval(_sosProgressTimer);
+  document.getElementById('sos-ring').classList.remove('active');
+  document.getElementById('sos-inner').innerHTML='SOS<span class="sos-sub">HOLD 3s</span>';
+  document.getElementById('sos-status').textContent='Hold the SOS button for 3 seconds to alert all group members with your live location';
+}
+
+function triggerSos(auto){
+  clearInterval(_sosProgressTimer);
+  sosActive=true;
+  if(navigator.vibrate) navigator.vibrate([200,100,200,100,200,300,200,100,200]);
+  document.getElementById('sos-ring').classList.add('active');
+  document.getElementById('sos-inner').innerHTML='🆘<span class="sos-sub">ACTIVE</span>';
+  document.getElementById('sos-status').textContent='🔴 SOS is active — sending alerts to all groups';
+  document.getElementById('sos-bar').classList.add('on');
+  document.getElementById('sos-nav-dot').classList.add('on');
+  var loc=memberLocs[me.uid];
+  var mapsLink=loc?'https://maps.google.com/?q='+loc.lat+','+loc.lng:'';
+  var txt=(auto?'⚠️ AUTO SOS (missed 3 check-ins): ':'🆘 SOS ALERT: ')+me.displayName+' needs help!'+(mapsLink?' Location: '+mapsLink:'');
+  myGroups.forEach(function(g){
+    var msg={uid:me.uid,name:me.displayName,txt:txt,lat:loc?loc.lat:null,lng:loc?loc.lng:null,ts:Date.now(),type:'sos'};
     fetch(DBURL+'/messages/'+g.id+'/sos'+Date.now()+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)}).catch(function(){});
     fetch(DBURL+'/groups/'+g.id+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({lastMessage:'🆘 SOS ALERT!',lastMessageTime:Date.now()})}).catch(function(){});
   });
-  // Save SOS to RTDB for real-time alert
-  if(loc) fetch(DBURL+'/sos/'+me.uid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:me.uid,displayName:me.displayName,lat:loc.lat,lng:loc.lng,timestamp:Date.now(),active:true})}).catch(function(){});
+  if(loc) fetch(DBURL+'/sos/'+me.uid+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:me.uid,displayName:me.displayName,lat:loc.lat,lng:loc.lng,ts:Date.now(),active:true})}).catch(function(){});
   toast('🆘 SOS sent to '+myGroups.length+' group(s)!',5000);
-}
-function cancelSos(){
-  if(!confirm('Cancel SOS alert?')) return;
-  sosActive=false;
-  document.getElementById('sos-btn').classList.remove('active');
-  document.getElementById('sos-btn').innerHTML='SOS<span class="sos-label">HOLD 3s</span>';
-  document.getElementById('sos-status').textContent='Hold the SOS button for 3 seconds to alert all group members with your location';
-  document.getElementById('sos-bar').classList.remove('on');
-  if(me) fetch(DBURL+'/sos/'+me.uid+'/active.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(false)}).catch(function(){});
-  myGroups.forEach(function(g){
-    var msg={senderId:me.uid,senderName:me.displayName,content:'✅ '+me.displayName+' is safe. SOS cancelled.',type:'system',timestamp:Date.now()};
-    fetch(DBURL+'/messages/'+g.id+'/sos_end'+Date.now()+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)}).catch(function(){});
-  });
-  toast('✅ SOS cancelled - all clear sent');
+  // Repeat SOS every 30 min if still active
+  if(auto) sosTimer=setTimeout(function(){if(sosActive) triggerSos(true);},1800000);
 }
 
-// ── SOS CONTACTS ─────────────────────────────────────────
-function renderSosContacts(){
-  var el=document.getElementById('sos-contacts');
-  if(!contacts.length){el.innerHTML='<div style="color:#999;font-size:13px;text-align:center;padding:12px">No emergency contacts added yet</div>';return;}
-  el.innerHTML=contacts.map(function(c,i){
-    return '<div style="background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 6px #00000008">'
-      +'<div style="width:42px;height:42px;border-radius:50%;background:#FF9800;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">'+c.icon+'</div>'
-      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.name+'</div><div style="font-size:12px;color:#666">'+c.phone+'</div></div>'
-      +'<a href="tel:'+c.phone+'" style="background:#e8f5e9;color:#43A047;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-decoration:none">📞 Call</a>'
-      +'</div>';
-  }).join('');
+function cancelSos(){
+  if(!confirm('Cancel SOS? This will send an all-clear to your groups.')) return;
+  sosActive=false;
+  clearTimeout(sosTimer);
+  clearInterval(_sosProgressTimer);
+  document.getElementById('sos-ring').classList.remove('active');
+  document.getElementById('sos-inner').innerHTML='SOS<span class="sos-sub">HOLD 3s</span>';
+  document.getElementById('sos-status').textContent='Hold the SOS button for 3 seconds to alert all group members';
+  document.getElementById('sos-bar').classList.remove('on');
+  document.getElementById('sos-nav-dot').classList.remove('on');
+  if(me) fetch(DBURL+'/sos/'+me.uid+'/active.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(false)}).catch(function(){});
+  notifyGroups('✅ '+me.displayName+' is safe. SOS cancelled.');
+  toast('✅ SOS cancelled — all-clear sent');
 }
+
+// ── SOS SETUP ─────────────────────────────────────────────────────
+function showSosSetup(){
+  closeModal();
+  showModal('🆘 Safety Setup',
+    '<div class="field"><label>Check-in Time</label>'
+    +'<div style="font-size:13px;color:var(--gray);margin-bottom:8px">If you haven\'t reached a safe place or checked in by this time, reminders will start</div>'
+    +'<input type="time" id="m-citime" value="'+(sosSettings.checkInTime||'22:00')+'" style="width:100%;padding:13px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;-webkit-appearance:none"></div>'
+    +'<div style="background:#FFF3E0;border-radius:12px;padding:12px;margin-bottom:14px;font-size:13px;color:#E65100">'
+    +'<b>How it works:</b><br>'
+    +'• After check-in time, you get 3 reminders every 30 min<br>'
+    +'• If you miss all 3, SOS is auto-triggered<br>'
+    +'• Arriving near a safe place = auto check-in ✅<br>'
+    +'• Tap "I\'m Safe" banner = manual check-in ✅'
+    +'</div>'
+    +'<div class="sec-label">Emergency Contacts</div>'
+    +'<div id="modal-contacts"></div>'
+    +'<input type="button" value="+ Add Contact" onclick="addContact()" style="width:100%;background:#FFF3E0;color:#E65100;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none;margin-bottom:12px">'
+    +'<input type="button" class="btn btn-blue" value="Save Settings" onclick="saveSosSettings()">'
+  );
+  // Render contacts inside modal
+  var mc=document.getElementById('modal-contacts');
+  if(mc) mc.innerHTML=contacts.map(function(c,i){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">'
+      +'<span style="font-size:22px">'+c.icon+'</span>'
+      +'<div style="flex:1"><div style="font-weight:600">'+c.name+'</div><div style="font-size:12px;color:var(--gray)">'+c.phone+'</div></div>'
+      +'<a href="tel:'+c.phone+'" style="color:var(--green);font-size:18px;text-decoration:none">📞</a>'
+      +'<button data-idx="'+i+'" onclick="deleteContact(parseInt(this.dataset.idx))" style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer">✕</button>'
+      +'</div>';
+  }).join('')||'<div style="color:var(--gray);font-size:13px;padding:8px 0">No contacts yet</div>';
+}
+
+function saveSosSettings(){
+  var t=document.getElementById('m-citime');
+  if(t) sosSettings.checkInTime=t.value||'22:00';
+  sosSettings.reminderCount=0;
+  localStorage.setItem('sos_settings',JSON.stringify(sosSettings));
+  closeModal();
+  toast('✅ Safety settings saved!');
+}
+
 function addContact(){
-  var name=prompt('Contact name (e.g. Mom):');if(!name) return;
-  var phone=prompt('Phone number:');if(!phone) return;
+  closeModal();
+  var name=prompt('Contact name (e.g. Mom):'); if(!name) return;
+  var phone=prompt('Phone number:'); if(!phone) return;
   contacts.push({name:name,phone:phone,icon:'👤'});
   localStorage.setItem('sos_contacts',JSON.stringify(contacts));
-  renderSosContacts();
+  renderContacts();
   toast('✅ '+name+' added');
 }
 
-// ── UTILS ─────────────────────────────────────────────────
+function deleteContact(idx){
+  if(!confirm('Remove '+contacts[idx].name+'?')) return;
+  contacts.splice(idx,1);
+  localStorage.setItem('sos_contacts',JSON.stringify(contacts));
+  renderContacts();
+}
+
+function renderContacts(){
+  var el=document.getElementById('sos-contacts');
+  if(!el) return;
+  if(!contacts.length){el.innerHTML='<div style="color:var(--gray);font-size:13px;padding:8px 0 16px">No emergency contacts. Add contacts so they can be called during SOS.</div>';return;}
+  el.innerHTML=contacts.map(function(c,i){
+    return '<div style="background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 6px #00000008">'
+      +'<span style="font-size:24px">'+c.icon+'</span>'
+      +'<div style="flex:1"><div style="font-weight:700">'+c.name+'</div><div style="font-size:12px;color:var(--gray)">'+c.phone+'</div></div>'
+      +'<a href="tel:'+c.phone+'" style="background:#E8F5E9;color:var(--green);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;text-decoration:none">📞</a>'
+      +'</div>';
+  }).join('');
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────
+function showModal(title,body){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal').classList.add('on');
+}
+function closeModal(){document.getElementById('modal').classList.remove('on');}
+
+// ── UTILS ──────────────────────────────────────────────────────────
 function timeAgo(ts){
-  if(!ts) return 'unknown';
+  if(!ts) return 'never';
   var d=Date.now()-ts;
   if(d<60000) return 'just now';
   if(d<3600000) return Math.floor(d/60000)+'m ago';
@@ -737,18 +1027,12 @@ function timeAgo(ts){
 
 function toast(msg,dur){
   var t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
+  t.textContent=msg; t.classList.add('show');
   clearTimeout(t._t);
   t._t=setTimeout(function(){t.classList.remove('show');},dur||3000);
 }
 
-// Auto-resize chat input
-document.getElementById('chat-input').addEventListener('input',function(){
-  this.style.height='auto';
-  this.style.height=Math.min(this.scrollHeight,100)+'px';
-});
-
-// ── INIT ──────────────────────────────────────────────────
+// ── INIT ────────────────────────────────────────────────────────────
 var saved=localStorage.getItem('ls_me');
 if(saved){
   try{
@@ -758,10 +1042,13 @@ if(saved){
     document.getElementById('p-name').textContent=me.displayName;
     document.getElementById('p-email').textContent=me.email;
     document.getElementById('p-avatar').textContent=me.displayName.charAt(0).toUpperCase();
-    loadGroups();
-    requestLocation();
-    renderSosContacts();
+    loadGroups(); requestLocation(); renderContacts(); renderPlaces(); startReminderCheck();
   }catch(e){localStorage.removeItem('ls_me');}
+}
+
+// Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(function(){});
 }
 </script>
 </body>
