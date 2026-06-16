@@ -1,27 +1,28 @@
 {
   "name": "LocationShare",
-  "short_name": "LocationShare",
+  "short_name": "LocShare",
   "description": "Real-time family location sharing and group chat with SOS",
-  "start_url": "/Locationshare/",
+  "start_url": "/Locationshare/index.html",
   "scope": "/Locationshare/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1565C0",
   "theme_color": "#1565C0",
+  "lang": "en",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/bibhuti4311/locationshare/main/icon.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "https://raw.githubusercontent.com/bibhuti4311/locationshare/main/icon.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
-  "categories": ["utilities", "social"],
-  "permissions": ["geolocation"]
+  "categories": ["utilities", "social", "navigation"],
+  "screenshots": []
 }
